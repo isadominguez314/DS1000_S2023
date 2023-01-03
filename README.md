@@ -144,11 +144,9 @@ The observance of religious holidays (activities observed by a religious group o
 *[Back to ToC](#table-of-contents)*
 
 ## Syllabus
-[1. Welcome!](#1-the-wonderful-world-of-data-science)
+[1. Welcome!](#1-intro-to-data-science)
 
-[2. Data Science and Ethics](#2-thinking-like-a-scientist--data-ethics)
-
-[3. Intro to R](#3-hello-world)
+[2. Intro to R](#2-intro-to-R)
 
 [4. Data Wrangling](#4--data-wrangling)
 
@@ -187,6 +185,15 @@ Lecture Content (2023/01/09):
 
 *[Back to ToC](#table-of-contents)*
 
+
+### 2\. Intro to `R`
+
+Lecture Content (2023/01/18):
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd)
+
+*[Back to ToC](#table-of-contents)*
 
 ## Helpful Resources
 
