@@ -181,7 +181,7 @@ Each lecture's materials will be released according to the following schedule:
 
 Lecture Content (2023/01/09):
 
-	* Slides
+	* [Slides]()
 	* Homework
 	* Problem Set
 
