@@ -1,6 +1,6 @@
 ---
 title: "Intro to Data Science"
-subtitle: "What R we doing?"
+subtitle: "What `R` we doing?"
 author: "Prof. Bisbee"
 institute: "Vanderbilt University"
 date: "Lecture Date: 2023/01/09\n Slides Updated: `r Sys.Date()`"
@@ -222,7 +222,7 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
 --
 
-background-image: url(https://us.123rf.com/450wm/snak/snak2102/snak210200007/164459427-jolly-roger-white-skull-and-crossbones-on-a-red-sign-warning-of-the-danger-of-landmines.jpg?ver=6)
+background-image: url(./figs/jolly-roger.webp)
 background-size: 30%
 background-position: 50% 80%
 
