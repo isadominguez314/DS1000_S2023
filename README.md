@@ -148,13 +148,11 @@ The observance of religious holidays (activities observed by a religious group o
 
 [2. Intro to `R`](#2-intro-to-r)
 
-[4. Data Wrangling](#4--data-wrangling)
+[3. Data Wrangling](#3-data-wrangling)
 
-[5. Univariate Data Analysis](#5-univariate-data-analysis)
+[4. Univariate & Multivariate Data Analysis](#4-univariate-data-analysis)
 
-[6. Univariate Data Visualization](#6-univariate-data-visualization)
-
-[7. Conditional Relationships & Visualization](#7-conditional-relationships--visualization)
+[5. Multivariate Data Analysis](#5-multivariate-data-analysis)
 
 [8. Regression](#8-regression)
 
@@ -203,6 +201,25 @@ Lecture Content (2023/01/23): Part 3 - Visualization in `R`
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
 * **Problem Set:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/ds1000_problem_set_1.Rmd)
+
+*[Back to ToC](#table-of-contents)*
+
+### 3\. Data Wrangling
+
+Lecture Content (2023/01/30): Replicability in `R`, tabular data
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.Rmd)
+* **Problem Set:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/ds1000_problem_set_2.Rmd)
+
+*[Back to ToC](#table-of-contents)*
+
+### 4\. Univariate & Multivariate Data Analysis
+
+Lecture Content (2023/02/01): Summaries of a single variable
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Data_Wrangling_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Data_Wrangling_hw.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
