@@ -146,7 +146,7 @@ The observance of religious holidays (activities observed by a religious group o
 ## Syllabus
 [1. Welcome!](#1-intro-to-data-science)
 
-[2. Intro to R](#2-intro-to-R)
+[2. Intro to `R`](#2-intro-to-r)
 
 [4. Data Wrangling](#4--data-wrangling)
 
@@ -177,21 +177,32 @@ Each lecture's materials will be released according to the following schedule:
 
 ### 1\. Intro to Data Science
 
-Lecture Content (2023/01/09):
+Lecture Content (2023/01/09): Welcome to the world of data science!
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
-* Problem Set: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
+* **Problem Set:** [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
 
 *[Back to ToC](#table-of-contents)*
 
 
 ### 2\. Intro to `R`
 
-Lecture Content (2023/01/18):
+Lecture Content (2023/01/11): Part 1 - Install and open `R`, packages, `tidyverse`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd)
+
+Lecture Content (2023/01/18): Part 2 - Objects, functions, `%>%`, and `<-`
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_hw.Rmd)
+
+Lecture Content (2023/01/23): Part 3 - Visualization in `R`
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
+* **Problem Set:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/ds1000_problem_set_1.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
