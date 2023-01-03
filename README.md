@@ -154,11 +154,15 @@ The observance of religious holidays (activities observed by a religious group o
 
 [5. Regression](#5-regression)
 
-[9. Clustering, Text, Twitter & Sentiment](#9--clustering-text-twitter-and-sentiment)
+[6. Midterm](#6-midterm-exam)
 
-[10. Classification](#10-classification-or-become-an-admissions-dean-for-fun-and-profit)
+[7. Classification](#5-classification)
 
-[11. Further Fun with R](#11-further-fun-with-r)
+[8. Clustering, Text, Twitter & Sentiment](#9-clustering--nlp)
+
+[9. Advanced Topics in Data Science](#9-advanced-topics-in-data-science)
+
+[10. Final](#10-final-exam)
 
 
 ### Lecture Notes, Data and Code for Each Topic 
@@ -265,7 +269,7 @@ Lecture Content (2023/02/27): Regression Part 3 - Multiple regression and catego
 
 **Review Session (2023/03/01): Review of Regression section.**
 
-### 6\. Midterm
+### 6\. Midterm Exam
 
 **Review Session (2023/03/06): Review of first half of semester.**
 
