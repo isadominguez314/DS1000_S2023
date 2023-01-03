@@ -150,11 +150,9 @@ The observance of religious holidays (activities observed by a religious group o
 
 [3. Data Wrangling](#3-data-wrangling)
 
-[4. Univariate & Multivariate Data Analysis](#4-univariate-data-analysis)
+[4. Univariate & Multivariate Data Analysis](#4-univariate--multivariate-data-analysis)
 
-[5. Multivariate Data Analysis](#5-multivariate-data-analysis)
-
-[8. Regression](#8-regression)
+[5. Regression](#5-regression)
 
 [9. Clustering, Text, Twitter & Sentiment](#9--clustering-text-twitter-and-sentiment)
 
@@ -165,9 +163,9 @@ The observance of religious holidays (activities observed by a religious group o
 
 ### Lecture Notes, Data and Code for Each Topic 
 Each lecture's materials will be released according to the following schedule:
-* Lecture Slides (PDF/html): published the evening of the date of the class. PDFs can be downloaded. html slides can be viewed online.
-* Problem Sets (.Rmd): published the morning of the lecture in which they are assigned
-* rMarkDown Notes (.Rmd): available from the evening of the preceding class (NB: not all lectures have .Rmd notes.)
+* Lecture Slides (PDF/html): Published the evening of the date of the class. PDFs can be downloaded. html slides can be viewed online.
+* Homework (.Rmd): Published following class. These should be read **interactively** via rmarkdown prior to the subsequent class.
+* Problem Sets (.Rmd): Published Monday after lecture. Due **Friday by 11:59PM on Brightspace**.
 
 **Note that these links will return a 404 error if clicked prior to this release schedule.**
 
@@ -179,7 +177,7 @@ Lecture Content (2023/01/09): Welcome to the world of data science!
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.Rmd); [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_hw.pdf)
-* **Problem Set:** [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
+* **Problem Set 0:** [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/ds1000_problem_set_0.pdf)
 
 *[Back to ToC](#table-of-contents)*
 
@@ -191,6 +189,8 @@ Lecture Content (2023/01/11): Part 1 - Install and open `R`, packages, `tidyvers
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part1_hw.Rmd)
 
+**Holiday (2023/01/16)**
+
 Lecture Content (2023/01/18): Part 2 - Objects, functions, and `<-`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part2_slides.html#1)
@@ -200,7 +200,9 @@ Lecture Content (2023/01/23): Part 3 - Visualization in `R`
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/Intro_to_R_Part3_hw.Rmd)
-* **Problem Set:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/ds1000_problem_set_1.Rmd)
+* **Problem Set 1:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/2_Intro_to_R/code/ds1000_problem_set_1.Rmd)
+
+**Review Session (2023/01/25): Review of Intro to `R` section.**
 
 *[Back to ToC](#table-of-contents)*
 
@@ -210,18 +212,139 @@ Lecture Content (2023/01/30): Replicability in `R`, tabular data
 
 * Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/3_Data_Wrangling/code/Data_Wrangling_slides.html#1)
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/Data_Wrangling_hw.Rmd)
-* **Problem Set:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/ds1000_problem_set_2.Rmd)
+* **Problem Set 2:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/3_Data_Wrangling/code/ds1000_problem_set_2.Rmd)
 
 *[Back to ToC](#table-of-contents)*
 
 ### 4\. Univariate & Multivariate Data Analysis
 
-Lecture Content (2023/02/01): Summaries of a single variable
+Lecture Content (2023/02/01): Univariate - Summaries of a single variable
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Data_Wrangling_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Data_Wrangling_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Data_Wrangling_hw.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Univariate_Analysis_hw.Rmd)
+
+Lecture Content (2023/02/06): Multivariate Part 1 - Summaries of multiple variables
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part1_hw.Rmd)
+* **Problem Set 3:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/ds1000_problem_set_3.Rmd)
+
+Lecture Content (2023/02/08): Multivariate Part 2 - Visualizations of multiple variables
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part2_hw.Rmd)
+
+Lecture Content (2023/02/13): Multivariate Part 3 - Uncertainty and bootstrapping
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/Multivariate_Analysis_part3_hw.Rmd)
+* **Problem Set 4:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/4_Uni_Multivariate/code/ds1000_problem_set_4.Rmd)
+
+**Review Session (2023/02/15): Review of Uni & Multivariate section.**
 
 *[Back to ToC](#table-of-contents)*
+
+
+### 5\. Regression
+
+Lecture Content (2023/02/20): Regression Part 1 - The concept of a linear regression
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/5_Regression/code/Regression_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part1_hw.Rmd)
+* **Problem Set 5:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/ds1000_problem_set_5.Rmd)
+
+Lecture Content (2023/02/22): Regression Part 2 - Interpreting model output and evaluating performance
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/5_Regression/code/Regression_part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part2_hw.Rmd)
+
+Lecture Content (2023/02/27): Regression Part 3 - Multiple regression and categorical predictors
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/5_Regression/code/Regression_part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/5_Regression/code/Regression_part3_hw.Rmd)
+
+**Review Session (2023/03/01): Review of Regression section.**
+
+### 6\. Midterm
+
+**Review Session (2023/03/06): Review of first half of semester.**
+
+**Midterm Exam (2023/03/08)**
+
+**Spring Break (2023/03/13)**
+
+**Spring Break (2023/03/15)**
+
+*[Back to ToC](#table-of-contents)*
+
+### 7\. Classification
+
+Lecture Content (2023/03/20): Classification Part 1 - The concept of a logistic Classification
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+* **Problem Set 6:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_6.Rmd)
+
+Lecture Content (2023/03/22): Classification Part 2 - Interpreting model output and evaluating performance
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_hw.Rmd)
+
+Lecture Content (2023/03/27): Classification Part 2 - Using models for prediction
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
+* **Problem Set 7:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_7.Rmd)
+
+**Review Session (2023/03/29): Review of Regression section.**
+
+*[Back to ToC](#table-of-contents)*
+
+### 8\. Clustering & NLP
+
+Lecture Content (2023/04/03): Clustering - *k*-means clustering
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+* **Problem Set 8:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_8.Rmd)
+
+Lecture Content (2023/04/05): NLP Part 1 - *k*-means clustering on text
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_hw.Rmd)
+
+Lecture Content (2023/04/10): NLP Part 2 - Sentiment analysis
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
+* **Problem Set 9:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_9.Rmd)
+
+**Review Session (2023/04/12): Review of Clustering section.**
+
+*[Back to ToC](#table-of-contents)*
+
+### 9\. Advanced Topics in Data Science
+
+Lecture Content (2023/04/17): Random forests, neural networks, image-as-data
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+
+Lecture Content (2023/04/19): Ethics in data science
+
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+
+*[Back to ToC](#table-of-contents)*
+
+### 10\. Final Exam
+
+**Review Session (2023/04/24): Review of second half of semester.**
+
+**Final Exam (2023/04/26)**
+
+*[Back to ToC](#table-of-contents)*
+
 
 ## Helpful Resources
 
