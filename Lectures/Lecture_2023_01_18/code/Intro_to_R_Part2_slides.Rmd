@@ -1,0 +1,856 @@
+---
+title: "Intro to `R`"
+subtitle: "Part 2: Functions and Objects"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2023/01/18\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+set.seed(123)
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Recap of last lecture
+
+--
+
+  - Using packages: `install.packages()` & `require()`
+  
+  - Loading and manipulating data: `readRDS()` and `%>%`
+  
+--
+
+2. `tidyverse` functions
+
+--
+
+  - `filter` and `select`
+  
+  - `summarize` and `mutate`
+  
+  - `group_by`
+  
+--
+
+3. Plotting in `R`
+
+--
+
+  - `ggplot` (`+` instead of `%>%`)
+
+---
+
+# Loading Packages & Data
+
+--
+
+- Create an `.Rmd` file and save to your `code` folder
+
+--
+
+  - Accept defaults, Save As... (with a good name), then `knit`
+
+--
+
+- Load the `tidyverse` package
+
+```{r,message=F}
+require(tidyverse)
+```
+
+--
+
+- Download `sc_debt.Rds` from  [GitHub](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic3_HelloWorld/data/sc_debt.Rds) and save to your `./data` folder
+  
+--
+
+- Now load the data with `readRDS("[PATH TO DATA]/sc_debt.Rds")`
+
+--
+
+  - We **create** an "object" to store the data using a left-arrow: `<-`
+
+--
+
+```{r}
+df <- readRDS("../data/sc_debt.Rds")
+```
+
+--
+
+  - NB: `../` means "go up one folder"
+
+---
+
+# Looking at Data
+
+--
+
+- We now have the contents of `sc_debt.Rds` stored in the object `df`
+
+--
+
+- We can look at this object directly
+
+```{r}
+df
+```
+
+---
+
+# Looking at Data
+
+- Or we can look at its columns
+
+```{r}
+names(df)
+```
+
+---
+
+# Good Data has Codebooks!
+
+--
+
+```{r,echo=FALSE,message=FALSE}
+defs <- data.frame(Name = names(df),
+                   Definition = c('Unit ID','Institution Name','State Abbreviation','Median Debt of Graduates',
+                            'Control Public or Private','Census Region','Predominant Degree Offered: Assocates or Bachelors',
+                            'Open Admissions Policy: 1=Yes, 2=No, 3=No 1st time students',
+                            'Admissions Rate: proportion of applications accepted','Type of institution*',
+                            'Average SAT scores',
+                            'Average Earnings of Recent Graduates',
+                            'Number of undergraduates',
+                            'Average cost of attendance (tuition-grants)',
+                            'Institution admits fewer than 10% of applications, 1=Yes, 0=No',
+                            'Institution is a research university, 1=Yes, 0=No'))
+```
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+require(kableExtra)
+defs %>%
+  kbl() %>%
+  kable_paper("hover", full_width = F,font_size = 13)
+```
+&ast;<font size="2">See [here](https://data.ed.gov/dataset/9dc70e6b-8426-4d71-b9d5-70ce6094a3f4/resource/658b5b83-ac9f-4e41-913e-9ba9411d7967/download/collegescorecarddatadictionary_01192021.xlsx)</font>
+
+---
+
+# Manipulating the Data
+
+--
+
+- These data are cool!
+
+--
+
+- But TMI at first
+
+--
+
+- I want to know...
+
+--
+
+  1. Where is `Vanderbilt University`?
+  
+--
+
+  2. Which school is the most selective?
+  
+--
+
+  3. Which schools produce the richest grads?
+  
+---
+
+# Manipulating the Data
+
+--
+
+- `filter` will select **rows** of the data based on some criteria
+
+--
+
+```{r}
+df %>%
+  filter(instnm == "Vanderbilt University") #<<
+```
+
+---
+
+# Manipulating the Data
+
+- Still TMI!
+
+--
+
+- `select` will select **columns**
+
+```{r}
+df %>%
+  filter(instnm == "Vanderbilt University") %>%
+  select(instnm,adm_rate,selective,sat_avg,md_earn_wne_p6) #<<
+```
+
+---
+
+# How does Vandy compare?
+
+--
+
+- `arrange` will sort the data based on a column (ascending!)
+
+```{r}
+df %>%
+  filter(adm_rate < .1) %>%
+  arrange(sat_avg,adm_rate) %>% #<<
+  select(instnm,adm_rate,sat_avg)
+```
+
+
+---
+
+# How does Vandy compare?
+
+--
+
+- `arrange` in descending order
+
+```{r}
+df %>%
+  filter(adm_rate < .1) %>%
+  arrange(-sat_avg,adm_rate) %>% #<<
+  select(instnm,adm_rate,sat_avg)
+```
+
+
+
+---
+
+# More complicated? More `%>%`!
+
+--
+
+- Less selective schools by SAT with debt and state
+
+```{r}
+df %>%
+  filter(adm_rate > .2 & adm_rate < .3) %>%
+  arrange(stabbr,-sat_avg) %>%
+  select(instnm,sat_avg,grad_debt_mdn,stabbr)
+```
+
+---
+
+# A quick aside on missingness
+
+--
+
+- Some rows have `NA` in some columns
+
+--
+
+  - `NA` is the standard code for **missing data** in `R`
+
+--
+
+  - Will return to `NA` with **data wrangling**...for now, `filter` with `is.na`
+  
+--
+
+```{r}
+df %>%
+  filter(is.na(sat_avg)) %>%
+  select(instnm,stabbr,sat_avg)
+```
+
+
+---
+
+# Stepping back
+
+--
+
+- Thus far, lots of .red[data]
+
+--
+
+- Not a lot of .blue[science]
+
+--
+
+- .blue[RQ]: How might admissions and SAT scores be **related**?
+
+--
+
+  - .blue[Theory]: selective schools have stricter criteria
+  
+--
+
+  - .blue[Hypothesis]: admissions and SAT scores should be **negatively** related
+  
+--
+
+- How can we test this hypothesis?
+
+---
+
+# Summarizing Data
+
+--
+
+- We can combine base `R` functions with `tidyverse` functions!
+
+--
+
+  - Base `R`: `mean()`
+  
+  - `tidyverse`: `summarise()` (aka `summarize()`)
+  
+--
+  
+- Overall average SAT scores
+
+```{r}
+df %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+---
+
+# Summarizing Data
+
+--
+
+- Let's unpack this
+
+```{r,eval=F}
+df %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+--
+
+  - Create new variable `mean_sat` that contains the `mean()` of every school's average SAT score
+  
+--
+
+  - `na.rm=T` means we want to ignore missing data. If not?
+  
+--
+  
+```{r,eval=T}
+df %>%
+  summarise(mean_sat = mean(sat_avg))
+```
+
+---
+
+# Summarizing Data
+
+--
+
+- Recall we want see if more selective schools have higher SAT scores
+
+--
+
+```{r,eval=T}
+df %>%
+  filter(adm_rate < .1) %>%
+  summarise(mean_sat_LT10 = mean(sat_avg,na.rm=T))
+```
+
+```{r,eval=T}
+df %>%
+  filter(adm_rate > .1 & adm_rate < .2) %>%
+  summarise(mean_sat_1020 = mean(sat_avg,na.rm=T))
+```
+
+
+
+---
+
+# Manipulating the Data: `filter()`
+
+- `filter()` command with other logical operators
+
+--
+  - `>, <`: greater than, less than (`>=, <=`)
+  - `!`: not (i.e., `!=` means "not equal to")
+  - `&`: and
+  - `|`: or
+  
+--
+
+```{r}
+df %>%
+  filter(instnm != "Vanderbilt University") %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data: `str_detect()`
+
+- `filter()` command with other functions
+
+--
+
+  - `str_detect([VAR],[PATTERN])`: detect a string
+  - `grepl([PATTERN],[VAR])`: also detects a string
+
+--
+
+```{r}
+df %>%
+  filter(str_detect(instnm,"Vanderbilt")) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- String detection is case sensitive!
+
+--
+
+```{r}
+df %>%
+  filter(str_detect(instnm,"VAND")) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+--
+
+```{r}
+df %>%
+  filter(str_detect(instnm,"anderbil")) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+--
+
+- `&` (and) and `|` (or) examples
+
+--
+
+```{r}
+df %>%
+  filter(str_detect(instnm,"Colorado")) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- `&` (and) and `|` (or) examples
+
+```{r}
+df %>%
+  filter(grepl("Colorado",instnm) & grepl(' of ',instnm)) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- `&` (and) and `|` (or) examples
+
+```{r}
+df %>%
+  filter(grepl("Colorado",instnm) | grepl('Vermont',instnm)) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- `&` (and) and `|` (or) examples
+
+```{r}
+df %>%
+  filter((grepl("Colorado",instnm) | grepl('Vermont',instnm)) & grepl(' of ',instnm)) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- `&` can be separated into multiple `filter()` commands
+
+--
+
+```{r}
+df %>%
+  filter((grepl("Colorado",instnm) | grepl('Vermont',instnm))) %>%
+  filter(grepl(' of ',instnm)) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Manipulating the Data
+
+- `|` can be moved into the `str_detect()` or `grepl()` commands
+
+--
+
+```{r}
+df %>%
+  filter(grepl("Colorado|Vermont",instnm)) %>%
+  filter(grepl(' of ',instnm)) %>%
+  select(instnm,stabbr,adm_rate,sat_avg)
+```
+
+---
+
+# Quick Test
+
+- Filter schools from Texas with the word "community" in their name
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Manipulating the Data: `contains()` + `matches()`
+
+--
+
+- `select` can be paired with `matches` or `contains` for similar flexibility
+
+--
+
+```{r}
+df %>%
+  select(contains('inst'))
+```
+
+---
+
+# Manipulating the Data
+
+- `select` can be paired with `matches` or `contains` for similar flexibility
+
+--
+
+  - `matches` can work with `|`
+
+```{r}
+df %>%
+  select(!matches('_|inst'))
+```
+
+---
+
+# Manipulating the Data
+
+- `select` can also work with `where` to find classes
+
+```{r}
+df %>%
+  select(where(is.numeric))
+```
+
+---
+
+# Quick Test
+
+- Filter to only schools in California and select only character columns
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Summarizing Data: `filter()` + `summarise()`
+
+--
+
+- What is the average SAT score for schools in California?
+
+--
+
+```{r}
+df %>%
+  filter(stabbr == "CA") %>%
+  summarise(mean_sat_CA = mean(sat_avg,na.rm=T))
+```
+
+---
+
+# Quick Test
+
+- Calculate average earnings for schools where SAT scores are higher than 1200 and the admissions rate is between 10 and 20 percent
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+# Adding / changing variables: `mutate()`
+
+--
+
+- `mutate()` creates a new variable
+
+--
+
+```{r}
+df %>%
+  mutate(newvar = 1) %>%
+  select(matches('instnm|newvar'))
+```
+
+---
+
+# Object Assignment Operator: `<-`
+
+- Thus far, nothing we have done has changed `df`
+
+--
+
+- `<-` is like "Save As..."
+
+--
+
+- `[name of object] <- [things you want saved]`
+
+--
+
+```{r}
+df <- df %>%
+  mutate(adm_rate_pct = adm_rate*100)
+```
+
+--
+
+- Did it work?
+
+```{r}
+df %>%
+  summarise(adm_rate_pct = mean(adm_rate_pct,na.rm=T),
+            adm_rate = mean(adm_rate,na.rm=T))
+```
+
+---
+
+# Logic: `ifelse()`
+
+- 3 inputs:
+
+  - Logical statement
+  
+  - Value if the logic is `TRUE`
+  
+  - Value if the logic is `FALSE`
+  
+--
+
+- `ifelse([LOGIC],[VALUE IF TRUE],[VALUE IF FALSE])`
+
+---
+
+# Logic: `ifelse()`
+
+- Say it out loud: "Create a new variable called `selective` that records if the school is selective or not. If the admissions rate is less than 10% (0.1), record the school as `selective = 1`. Otherwise, record the school as `selective = 0`."
+
+```{r,eval = F}
+df %>%
+  mutate(selective = ifelse([LOGIC],
+                            [VALUE IF TRUE],
+                            [VALUE IF FALSE]))
+```
+---
+
+# Logic: `ifelse()`
+
+- Say it out loud: "Create a new variable called `selective` that records if the school is selective or not. **If the admissions rate is less than 10% (0.1)**, record the school as `selective = 1`. Otherwise, record the school as `selective = 0`."
+
+```{r,eval = F}
+df %>%
+  mutate(selective = ifelse(`adm_rate < 0.1`,
+                            [VALUE IF TRUE],
+                            [VALUE IF FALSE]))
+```
+
+---
+
+# Logic: `ifelse()`
+
+- Say it out loud: "Create a new variable called `selective` that records if the school is selective or not. If the admissions rate is less than 10% (0.1), **record the school as `selective = 1`**. Otherwise, record the school as `selective = 0`."
+
+```{r,eval = F}
+df %>%
+  mutate(selective = ifelse(adm_rate < 0.1,
+                            `1`,
+                            [VALUE IF FALSE]))
+```
+---
+
+# Logic: `ifelse()`
+
+- Say it out loud: "Create a new variable called `selective` that records if the school is selective or not. If the admissions rate is less than 10% (0.1), record the school as `selective = 1`. **Otherwise, record the school as `selective = 0`**."
+
+```{r,eval = F}
+df %>%
+  mutate(selective = ifelse(adm_rate < 0.1,
+                            1,
+                            `0`))
+```
+---
+
+# Logic: `ifelse()` + `mutate()`
+
+- Remember that if we want to keep this, we need the **assignment operator** `<-`
+
+```{r}
+df <- df %>%
+  mutate(selective = ifelse(adm_rate < 0.1,
+                            1,
+                            0))
+```
+
+---
+
+# Quick Test
+
+- Create a new variable `big` that is `1` if a school has more than 10,000 undergrads and `0` otherwise
+
+```{r}
+# INSERT CODE HERE
+```
+
+---
+
+
+# Summarizing Data
+
+--
+
+- Remember the **hypothesis** from above?
+
+--
+
+  - Schools with lower admissions rates will have higher SAT scores
+  
+--
+
+- Why is this a sensible hypothesis?
+
+--
+
+  - Selective schools evaluate applicants based on SAT scores
+
+
+---
+
+# Summarizing Data
+
+--
+
+- One final `tidyverse` function: `group_by()`
+
+--
+
+```{r,eval=T}
+df %>%
+  group_by(selective) %>%
+  summarise(mean_sat = mean(sat_avg,na.rm=T))
+```
+
+
+
+---
+
+# Conclusion
+
+--
+
+- What we've done today is a microcosm of data science
+
+--
+
+  1. Opened .red[data] (`readRDS`)
+  
+--
+  
+  2. Looked at .red[data] (`tidyverse` + `select()`, `filter()`, `arrange()`)
+    
+--
+
+  3. Generated .blue[hypotheses] (Admissions versus SAT scores)
+  
+--
+
+  4. .red[Tested] .blue[hypotheses] (`summarise()` + `mean()`)
+  
+--
+
+- Next lecture reviews these skills and introduces **visualization**
+
+---
+
+# Quiz & Homework
+
+- Go to Brightspace and take the second quiz
+
+--
+
+  - The password to take the quiz is `r paste(sample(1:9,size = 4,replace = T),collapse = '')`
+  
+--
+
+- **Homework:**
+
+--
+  
+  1. Work through Lecture_2023_01_18_hw.Rmd

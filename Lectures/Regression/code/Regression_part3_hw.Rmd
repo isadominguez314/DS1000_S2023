@@ -1,0 +1,465 @@
+---
+title: "Topic 8. Conditional Variation, Part 3"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2022-10-24"
+output: html_document
+---
+
+## Introduction
+
+In this lecture we'll introduce a couple of new concepts: cross validation and feature selection.
+
+
+```{r, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(plotly)
+library(modelr)
+library(tidymodels)
+library(glmnet)
+```
+
+## The Data
+
+We're going to work with a subset of the data that only includes a few variables, which are selected below. 
+
+```{r}
+mv<-readRDS("../data/mv.Rds")%>%
+  filter(!is.na(budget))%>%
+  mutate(log_gross=log(gross),
+         log_budget = log(budget))%>%
+  mutate(year=as_factor(year))%>%
+  select(
+    log_gross,
+    log_budget,
+    rating,
+    genre,
+    runtime,
+    bechdel_score,
+    year)%>%
+  drop_na()
+```
+
+
+## Cross Validation Recap
+
+The essence of prediction is discovering the extent to which our models can predict outcomes for data that does not come from our sample. Many times this process is temporal. We fit a model to data from one time period, then take predictors from a subsequent time period to come up with a prediction in the future. For instance, we might use data on team performance to predict the likely winners and losers for upcoming soccer games. 
+
+This process does not have to be temporal. We can also have data that is out of sample because it hadn't yet been collected when our first data was collected, or we can also have data that is out of sample because we designated it as out of sample.
+
+The data that is used to generate our predictions is known as 
+*training* data. The idea is that this is the data used to train our model, to let it know what the relationship is between our predictors and our outcome. So far, we have worked mostly with training data. 
+
+That data that is used to validate our predictions is known as *testing* data. With testing data, we take our trained model and see how good it is at predicting outcomes using out of sample data. 
+
+One very simple approach to this would be to cut our data in half. This is what we've done so far.  We could then train our model on half the data, then test it on the other half. This would tell us whether our measure of model fit (e.g. rmse, auc) is similar or different when we apply our model to out of sample data. 
+
+But this would only be a "one-shot" approach. It would be better to do this multiple times, cutting the data into two parts: training and testing, then fitting the model to the training data, and then checking its predictions against the testing data. That way, we could generate a large number of rmse's to see how well the model fits on lots of different possible out-of-sample predictions. 
+
+This process is called *cross validation*, and it involves two important decisions: first, how will the data be cut, and how many times will the validation run. 
+
+We're going to cut our training dataset 75/25, and we'll repeat that 25 times. This is so our code will run faster-- we would really want to do this more like 1,000 times in practice. 
+
+
+## Lasso for Feature Selection
+
+One of the key decisions for an analyst is which variables to include. We can make decisions about this using theory, or our understanding of the context, but we can also rely on computational approaches. This is known as *regularization* and it involves downweighting the importance of coefficients from a model based on the contribution that a predictor makes. We're going to make use of a regularization penalty known as the "lasso." The lasso downweights variables mostly by dropping variables that are highly correlated with one another, leaving only one of the correlated variables as contributors to the model. 
+
+Note that the package we'll use -- `glmnet` -- doesn't work with formulas. Instead, we need to create one matrix of our outcome (in this case, `log_gross`), and one matrix of our predictors. We'll start with just the outcome, which we'll save to the object `Y`.
+
+```{r}
+Y <- mv %>%
+  select(log_gross) %>%
+  as.matrix()
+```
+
+When it comes to the predictors, we need to be -- as always -- mindful of their type. Let's start by looking at them:
+
+```{r}
+mv %>%
+  select(-log_gross)
+```
+
+Some of these are continuous (`log_budget`, `runtime`), while others are categorical (`genre`, `rating`), while others are somewhere in between (`year`). Unlike in `lm()`, we can't trust `R` to know what to do with the categorical variables for us. Instead, we need to create dummy versions! To do this, we can use an easy helper package called `fastDummies`.
+
+Then we need to convert all `chr` types to `fctr`. We can do this with a fancy mutate command:
+
+```{r}
+# install.packages('fastDummies')
+require(fastDummies)
+X <- mv %>%
+  select(-log_gross) %>%
+  mutate_if(is.character,as.factor) %>%
+  fastDummies::dummy_cols(remove_first_dummy = T,remove_selected_columns = T)
+X
+
+X <- X %>% as.matrix()
+```
+
+Now we have our data! Time to put it into a LASSO!
+
+## Introducing the LASSO
+
+The LASSO model provided in the `glmnet` package is very deep. We can estimate the model and then plot it using a pre-made `plot()` command. We will be manually setting one of the inputs: `penalty.factor = .1`. Note that this influences how heavily the LASSO downweights variables that are highly correlated with one another.
+
+```{r}
+lassFit <- glmnet(x = X,y = Y,penalty.factor = rep(.1,ncol(X)))
+plot(lassFit)
+```
+Whoa! WHAT IS HAPPENING?!
+
+This model is illustrating *all* of the possible predictors we have introduced as different colored lines, where the y-axis shows their estimated coefficient and the x-axis shows the penalty that is being applied. The stronger the "penalty", the harder it is for less important predictors to be included. Thus, as we move from left to right on the x-axis, we are seeing less and less strict penalties, and thus more and more predictors.
+
+So what is the **most** important predictor? In other words, what is the black line that jumps up right at 0 and stays positive for the entire x-axis? To find out, we can look at one of the many results in the `fit` object: `beta`. This is a special kind of matrix that stores the coefficients for each predictor across all different levels of the penalty. However, we want to convert it back to a `tibble()` so we can look at it. To do so, we need to first turn it into a matrix with `as.matrix()`, then turn it into a data frame with `data.frame()`, THEN create a new column that contains the predictor names (which are stored as row names), and THEN turn it into a tibble with `as_tibble()`. 
+
+```{r}
+betas <- lassFit$beta %>%
+  as.matrix() %>%
+  data.frame() %>%
+  mutate(predictor = row.names(.)) %>%
+  as_tibble() %>%
+  relocate(predictor)
+
+betas
+```
+
+Once we've done that, we arrange the data by the first penalty `s1` in order to determine which variable is most prognostic of a movie's gross.
+
+```{r}
+betas %>%
+  arrange(-s1)
+```
+
+Unsurprisingly, the budget is what matters! However, since nothing else has a non-zero value in column `s1`, we can't really determine which is second, third, fourth most important. But we can do more to investigate what other variables are particularly important. Let's `gather()` the data and then calculate the earliest penalty at which each variable appears.
+
+```{r}
+betasFirst <- betas %>%
+  gather(penalty,coef,-predictor) %>%
+  mutate(penalty = as.numeric(gsub('s','',penalty))) %>%
+  group_by(predictor) %>%
+  arrange(penalty) %>%
+  filter(coef != 0) %>%
+  slice(1)
+betasFirst %>%
+  arrange(penalty)
+```
+
+We can also plot this.
+
+```{r}
+betasFirst %>%
+  ggplot(aes(x = penalty,y = reorder(predictor,-penalty))) + 
+  geom_bar(stat = 'identity') + 
+  labs(title = 'LASSO results',
+       x = 'Penalty reduction (larger = less penalty)',
+       y = 'Predictors')
+```
+
+As we can see, the budget is the **most** important predictor by a long-shot, followed by several categories of the rating and genre categories.
+
+## RMSE Revisited
+
+The benefit of the LASSO is that it automatically determines which variables to drop using this penalty. However, does this necessarily mean that our RMSE is improved? Theoretically, if it is only choosing the best variables, we should find a much lower RMSE than when we were just trying predictors haphazardly.
+
+Furthermore, note that we set the penalty value to 0.1 above. Is this the best value of the penalty? Could we be more strict? Less strict? 
+
+In order to answer these questions, we need to return to cross validation. Happily, the `glmnet` function actually has its own cross validation with `cv.glmnet`. This will look across different values of the penalty and determine the value that minimizes mean squared error. We can tell it to evaluate based on mean squared error (`mse`) and use 10 folds for cross validation.
+
+```{r}
+lassCVFit <- cv.glmnet(x = X,y = Y,type.measure = 'mse',nfolds = 10)
+```
+
+Now when we plot it, we will see the MSE for each choice of the penalty measure. (Note that this reverses the x-axis, meaning that as we move from left to right, we are INCREASING the penalty.) The y-axis tells us the average mean squared error across 10 cross validation runs for different levels of the penalty, with the vertical lines indicating 1) the penalty that minimizes mse and 2) the penalty that is within 1 standard deviation of the lowest penalty. Note that, as the penalty gets higher, we include fewer variables (indicated on the top part of the plot) but also do a worse job predicting the outcome (indicated by higher y-axis values of the mse).
+
+```{r}
+plot(lassCVFit)
+```
+So what do we do with this information? Let's find the model that optimizes this trade-off between parsimony (fewer variables is better) and accuracy (lower mse is better). The output tells us what this value is (we'll be using `lambda.min`), and we can just re-estimate the LASSO at this value! To do so, we can use the `predict()` method which will take the CV fitted object and extract the results at this optimal value.
+
+```{r}
+bestLambda <- lassCVFit$lambda.min
+
+preds <- predict(lassCVFit,s = bestLambda,newx = X)
+
+sqrt(mean((preds - Y)^2,na.rm=T))
+```
+Great! We've got our "best" penalty parameter which minimizes RMSE. We have reduced our prediction errors to 1.06 by including only a subset of predictors. 
+
+## Random Forests
+An alternative to LASSO is something called a "random forest". This is another type of more sophisticated algorithm that focuses on making accurate predictions. We will use this via the `ranger` package. Similar to `cv.glmnet`, `ranger` will also conduct cross validation automatically, although there are a number of inputs we might want to tweak to fully optimize our predictions. Happily, `ranger` also works nicely with formulas, although if we want to predict `log_gross` as a function of everything, we need only write `log_gross ~ .`. Let's give it a try with the default settings first.
+
+```{r}
+set.seed(123)
+require(ranger)
+
+rang1 <- ranger(log_gross ~.,data = mv)
+rang1
+```
+
+As illustrated, we get an MSE of roughly 1.189, or an RMSE of 1.09. Not quite as good as our best approach with the LASSO! However, recall that we have not yet converted our character variables to factors. We can also input the `X` and `Y` matrices from above into `ranger`, which has already converted the categorical variables to dummies for us.
+
+```{r}
+rang2 <- ranger(x = X,y = Y)
+rang2
+```
+
+Our results get *worse*? How is that possible? Note that the old adage of 'garbage-in, garbage-out' applies to data science! There are some dummy columns that have extreme skew (i.e., only two movies are rated X, for example). These can hurt the algorithm. We can instead have the algorithm determine how best to work with factor variables. The default is to pretend like they are all ordered factors ("ignore"), which is what we did above. However, we can also the command (confusing named) "order", which has `ranger` calculate the principal components of the factors behind the scenes and use this as the predictor instead of a bunch of dummies. Let's compare!
+
+```{r}
+set.seed(123)
+ranger(log_gross ~.,data = mv,respect.unordered.factors = 'ignore')
+set.seed(123)
+ranger(log_gross ~.,data = mv,respect.unordered.factors = 'order')
+```
+
+Finally, we can get *really* deep with the multiple other inputs that might further improve our model fit. For those interested in pursuing a data science minor, the `caret` package will become your best friend. For now, we're just going to use the best-performing `ranger` model and use it to predict our expected return on an investment!
+
+## How to use
+
+Let's pretend we are a consultant for investors who have been offered the opportunity to finance a new blockbuster. The movie has a \$10m budget, and can either be rated R or PG-13, and can be scripted to be more like a horror movie or more like an adventure. We can also choose whether to make a short version (clocking in a 100 minutes) or a longer version (taking 2.5 hours!). We don't yet know how well it will score on IMDB, but we can use our best model to predict how much money we will make if we back it.
+
+We first create the new data for predictions using a function called `data_grid()`, and then predict our LASSO model using the bestLambda.
+
+```{r}
+
+newdata<-data_grid(mv,
+          title="Data Science 3: The Tuning",         
+          log_budget=log(1e7),
+          rating=c("R","PG-13"),
+          genre=c("Horror","Adventure"),
+          runtime=c(100,150),
+          bechdel_score = 3,
+          year = factor(2020))
+
+predsRang <- predict(rang1,data = newdata)
+
+newdata$preds <- predsRang$predictions
+
+
+newdata %>%
+  mutate(low_dollar_amount=dollar(exp(preds-sqrt(rang2$prediction.error))))%>%
+  mutate(mean_dollar_amount=dollar(exp(preds)))%>%
+  mutate(hi_dollar_amount=dollar(exp(preds+sqrt(rang2$prediction.error)))) %>%
+  select(-log_budget,-bechdel_score,-year)
+
+newdata %>%
+  mutate(low_dollar_amount=exp(preds-sqrt(rang2$prediction.error)))%>%
+  mutate(mean_dollar_amount=exp(preds)) %>%
+  mutate(hi_dollar_amount=exp(preds+sqrt(rang2$prediction.error))) %>%
+  select(-log_budget,-bechdel_score,-year) %>%
+  ggplot(aes(x = rating,y = mean_dollar_amount,color = genre)) + 
+  geom_point(position = position_dodge(width = .5)) + 
+  geom_errorbar(aes(ymin = low_dollar_amount,ymax = hi_dollar_amount),width = 0,position = position_dodge(width = .5)) + 
+  facet_wrap(~runtime) + 
+  scale_y_continuous(labels = scales::dollar_format()) + 
+  geom_hline(yintercept = 1e07,linetype = 'dashed',color = 'red') + 
+  labs(title = 'Predicted Return on Investment',
+       subtitle = '$10m budget with different genres, ratings, and runtimes',
+       x = 'Rating',
+       y = 'Return on Investment',
+       color = 'Genre')
+
+```
+
+What should we recommend as a result?
+
+
+## Lecture Code
+```{r}
+require(tidyverse)
+require(scales)
+mv<-readRDS("../data/mv.Rds")%>%
+  filter(!is.na(budget))%>%
+  mutate(log_gross=log(gross),
+         log_budget = log(budget))%>%
+  select(log_gross,log_budget,rating,genre,runtime,bechdel_score,year)%>%
+  drop_na()
+
+
+# Slide 4
+# Create list of row numbers at random
+set.seed(123)
+inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F) # NB: Set replace = FALSE for CV
+# Use slice(inds) to get training data
+train <- mv %>% 
+  slice(inds)
+# Use slice(-inds) to get test data
+test <- mv %>%
+  slice(-inds)
+
+# Slide 5
+m2 <- lm(log_gross ~ log_budget,train)
+# predict() function on a new dataset
+test$preds <- predict(m2,newdata = test)
+# Now calculate RMSE on the new dataset
+e <- test$log_gross - test$preds
+se <- e^2
+mse <- mean(se,na.rm=T)
+rmse <- sqrt(mse)
+rmse
+
+# Slide 6
+set.seed(123)
+bsRes <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
+  train <- mv %>% slice(inds)
+  test <- mv %>% slice(-inds)
+  mTrain <- lm(log_gross ~ log_budget,train)
+  test$preds <- predict(mTrain,newdata = test)
+  rmse <- sqrt(mean((test$log_gross - test$preds)^2,na.rm=T))
+  bsRes <- c(bsRes,rmse)
+}
+mean(bsRes)
+
+# Slide 9
+m1 <- lm(log_gross ~ log_budget,mv)
+newdata <- data.frame(log_budget = log(1e07))
+predGross <- predict(m1,newdata = newdata)
+dollar(exp(predGross))
+
+# Slide 10
+dollar(exp(predGross - mean(bsRes))) # Lower bound
+dollar(exp(predGross + mean(bsRes))) # Upper bound
+
+# Slide 11
+m1 <- lm(log_gross ~ log_budget + rating + runtime + genre,mv)
+newdata <- data.frame(log_budget = log(1e07),
+                      rating = 'R',
+                      genre = 'Fantasy',
+                      runtime = 108)
+predGross <- predict(m1,newdata = newdata)
+dollar(exp(predGross))
+
+# Slide 12
+cvFn <- function(dat,prop) {
+  inds <- sample(1:nrow(dat),replace = F,
+                 size = round(nrow(dat)*prop))
+  train <- dat %>% slice(inds)
+  test <- dat %>% slice(-inds)
+  # Code to ensure train and test have same categories
+  for(var in colnames(dat %>% select(where(is.character)))) {
+    keeps <- train %>%
+      count(get(var)) %>%
+      filter(n > 1)
+    train <- train %>%
+      filter(get(var) %in% keeps$`get(var)`)
+    test <- test %>%
+      filter(get(var) %in% unique(train[[var]]))
+  }
+  return(list(train = train,test = test))
+}
+
+# Slide 13
+set.seed(123)
+bsRes <- NULL
+for(i in 1:100) {
+  cvDat <- cvFn(dat = mv %>% 
+                  select(log_gross,log_budget,
+                         rating,runtime,genre),
+                      prop = .75)
+  # Training Model
+  mTrain <- lm(log_gross~log_budget+rating+runtime+genre,cvDat$train)
+  # Evaluating Model
+  cvDat$test$preds <- predict(mTrain,newdata = cvDat$test)
+  se <- (cvDat$test$log_gross - cvDat$test$preds)^2
+  rmse <- sqrt(mean(se,na.rm=T))
+  bsRes <- c(bsRes,rmse)
+}
+mean(bsRes)
+
+# Slide 14
+dollar(exp(predGross - mean(bsRes))) # Lower bound
+dollar(exp(predGross + mean(bsRes))) # Upper bound
+
+# Slide 16
+rmse_comp <- NULL
+for(pred in c('bechdel_score','runtime','log_budget','rating','year')) {
+  for(i in 1:100) {
+    cvDat <- cvFn(dat = mv %>% select(log_gross,pred),prop = .75)
+    forml <- paste0('log_gross ~ ',pred)
+    mTrain <- lm(as.formula(forml),data = cvDat$train)
+    cvDat$test$hatY <- predict(mTrain,newdata = cvDat$test)
+    se <- (cvDat$test$log_gross - cvDat$test$hatY)^2
+    rmse <- sqrt(mean(se,na.rm=T))
+    rmse_comp <- data.frame(pred = pred,rmse = rmse,cvInd = i) %>%
+      bind_rows(rmse_comp)
+  }
+}
+
+# Slide 17
+rmse_comp %>%
+  ggplot(aes(x = rmse,y = reorder(pred,rmse))) + 
+  geom_boxplot() + 
+  labs(title = 'RMSE by model',
+       x = 'RMSE',y = NULL)
+
+# Slide 61
+require(ranger)
+set.seed(123)
+(mRang <- ranger(log_gross ~ .,mv,importance = 'impurity'))
+
+# Slide 62
+mRang$variable.importance
+
+# Slide 63
+data.frame(Predictors = names(mRang$variable.importance),
+           Importance = mRang$variable.importance) %>%
+  ggplot(aes(x = Importance,y = reorder(Predictors,Importance))) + 
+  geom_bar(stat = 'identity')
+
+# Slide 64
+predRang <- predict(mRang,data = newdata %>%
+  mutate(year = 2022,
+         bechdel_score = 3))
+dollar(exp(predRang$predictions))
+
+dollar(exp(predRang$predictions - sqrt(mRang$prediction.error)))
+dollar(exp(predRang$predictions + sqrt(mRang$prediction.error)))
+
+# Slide 65
+require(glmnet)
+
+# Slide 66
+Y <- mv %>%
+  select(log_gross)
+X <- mv %>%
+  select(-log_gross)
+
+# Slide 67
+X <- X %>%
+  mutate_if(is.character,as.factor) %>%
+  fastDummies::dummy_cols(remove_first_dummy = T,
+                          remove_selected_columns = T)
+
+lassFit <- glmnet(x = as.matrix(X),
+                  y = as.matrix(Y))
+
+# Slide 68
+plot(lassFit)
+
+# Slide 69
+betas <- lassFit$beta %>%
+  as.matrix() %>%
+  data.frame() %>%
+  mutate(predictor = row.names(.)) %>%
+  as_tibble() %>%
+  gather(penalty,coef,-predictor) %>%
+  mutate(penalty = as.numeric(gsub('s','',penalty))) %>%
+  group_by(predictor) %>%
+  arrange(penalty) %>%
+  filter(coef != 0) %>%
+  slice(1) %>%
+  left_join(data.frame(penalty = 1:length(lassFit$lambda),
+                       lambda = lassFit$lambda))
+
+# Slide 70
+betas %>%
+  ggplot(aes(x = lambda,y = reorder(predictor,lambda))) + 
+  geom_bar(stat = 'identity') + 
+  labs(title = 'LASSO results',
+       x = 'Lambda',y = NULL)
+
+
+
+```

@@ -1,0 +1,678 @@
+---
+title: "Regression"
+subtitle: "Review"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2022/10/26\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{r,include=F}
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+```
+
+# Agenda
+
+1. Review session!
+
+--
+
+  - Midterm survey feedback: do it live!
+  
+--
+  
+2. LASSO
+
+
+---
+
+# Regression analysis
+
+- Remember the "camps"
+
+--
+
+.leftcol[
+
+**Theory testing:**
+
+]
+
+--
+
+.rightcol[
+
+**Prediction:**
+
+]
+
+---
+
+# Regression analysis
+
+- Remember the "camps"
+
+.leftcol[
+
+**Theory testing:**
+
+- Research question &rarr; theory &rarr; hypothesis &rarr; data analysis
+
+]
+
+
+.rightcol[
+
+**Prediction:**
+
+- Practical question &rarr; model training &rarr; prediction
+
+]
+
+---
+
+# Regression analysis
+
+- Remember the "camps"
+
+.leftcol[
+
+**Theory testing:**
+
+- Research question &rarr; theory &rarr; hypothesis &rarr; data analysis
+  
+- Data science in social sciences: econ, poli sci, sociology
+
+]
+
+
+.rightcol[
+
+**Prediction:**
+
+- Practical question &rarr; model training &rarr; prediction
+  
+- Data science in applied sciences: business, CS, physical sciences
+
+]
+
+---
+
+# Regression analysis
+
+- Remember the "camps"
+
+.leftcol[
+
+**Theory testing:**
+
+- Research question &rarr; theory &rarr; hypothesis &rarr; data analysis
+  
+- Data science in social sciences: econ, poli sci, sociology
+
+- We care about *relationships*
+
+]
+
+
+.rightcol[
+
+**Prediction:**
+
+- Practical question &rarr; model training &rarr; prediction
+  
+- Data science in applied sciences: business, CS, physical sciences
+  
+- We care about *accuracy*
+
+]
+
+---
+
+# Regression analysis
+
+- Remember the "camps"
+
+.leftcol[
+
+**Theory testing:**
+
+- Research question &rarr; theory &rarr; hypothesis &rarr; data analysis
+  
+- Data science in social sciences: econ, poli sci, sociology
+
+- We care about *relationships*
+
+- Examples: gender gap in Trump support; turnovers and winning basketball games; Bechdel test and movie gross
+
+]
+
+
+.rightcol[
+
+**Prediction:**
+
+- Practical question &rarr; model training &rarr; prediction
+  
+- Data science in applied sciences: business, CS, physical sciences
+  
+- We care about *accuracy*
+
+- Examples: predicting stocks; informing investments; forecasting weather
+  
+]
+
+---
+
+# Regression analysis
+
+- More overlap than you might think!
+
+--
+
+- Topic: movie IMBD scores versus runtime
+
+--
+
+.leftcol[
+
+**Theory testing:**
+
+- Research question: Do longer movies score higher?
+
+- Theory: longer &rarr; bigger bang for your buck
+
+- Hypothesis: longer movies score higher
+
+]
+
+--
+
+
+.rightcol[
+
+**Prediction:**
+
+- Practical question: How can we increase IMDB score?
+
+]
+
+---
+
+# Regression: Theory Testing
+
+- Given a research question...
+
+--
+
+  1. Identify **variables** (which is outcome and predictor?)
+  
+  2. Visualize **variables** (uni- and multivariate)
+  
+--
+
+  3. Regression
+  
+--
+  
+  4. Calculate **errors** (aka "residuals") and **predicted values**
+  
+  5. Visualize **errors** (uni- and multivariate)
+
+
+---
+
+# 1: Identify Variables
+
+- .blue[Research question:] Do .blue[longer] movies .blue[score higher]?
+
+--
+
+- $Y = \alpha + \beta X + \varepsilon$
+
+--
+
+  - $Y$: IMDB score
+  
+  - $X$: runtime
+  
+---
+
+# 2: Visualize Variables
+
+- Skew
+
+```{r,message=F,warning=F}
+require(tidyverse)
+require(scales)
+mv<-readRDS("../data/mv.Rds")
+
+# Univariate visualization of runtime & score
+```
+
+--
+
+- Missing data
+
+```{r}
+# Multivariate visualization of runtime & score over time
+```
+
+--
+
+- Relationship
+
+```{r}
+# Multivariate visualization of score versus runtime
+```
+
+---
+
+# 3: Regression
+
+- $Y = \alpha + \beta X + \varepsilon$
+
+--
+
+- `lm()` function
+
+--
+
+  - `formula = Y ~ X`
+  
+  - `data = mv`
+
+--
+
+```{r}
+# Estimate regression
+```
+
+---
+
+# 4: Calculate Errors & Predictions
+
+- $\varepsilon = Y - \hat{Y}$
+
+--
+
+  - $\varepsilon$ = errors (aka "residuals")
+  
+  - $\hat{Y}$ = predicted outcomes
+  
+--
+  
+```{r}
+# Calculate predicted values
+
+# Calculate errors
+```
+
+---
+
+# 5: Visualize Errors
+
+- Skew
+
+```{r}
+# Univariate visualization of errors
+```
+
+--
+
+- Fit
+
+--
+
+  - $\varepsilon$ on the y-axis
+  
+  - One of $\hat{Y}$, $Y$, or $X$ on the x-axis
+
+```{r}
+# Multivariate visualization of errors
+```
+
+---
+
+# Regression: Prediction
+
+- Given a practical question...
+
+--
+
+  1. Identify **variables** (what is outcome and possible predictor?)
+  
+  2. Visualize **variables** (uni- and multivariate)
+  
+--
+
+  3. Model training
+  
+--
+  
+  4. Calculate **RMSE** via cross validation
+  
+  5. Re-start at 1. with different **predictors**
+
+
+---
+
+# 1: Identify Variables
+
+- .blue[Practical question:] How can we increase IMDB score?
+
+--
+
+- $Y =~??$
+
+--
+
+  - $Y$: IMDB score
+  
+  - $X$: best possible predictors
+  
+---
+
+# 2: Visualize Variables
+
+- Skew
+
+```{r,message=F,warning=F}
+require(tidyverse)
+require(scales)
+mv<-readRDS("../data/mv.Rds")
+
+# Univariate visualization of score & ??
+```
+
+--
+
+- Missing data
+
+```{r}
+# Multivariate visualization of score & ?? over time
+```
+
+--
+
+- Conditional visualization
+
+```{r}
+# Multivariate visualization of score versus ??
+```
+
+---
+
+# 3: Model Training
+
+- $Y = \alpha + \beta X + \varepsilon$
+
+--
+
+- `lm()` function
+
+--
+
+  - `formula = Y ~ X`
+  
+  - `data = mv`
+
+--
+
+- Care about **overfitting**!
+
+--
+
+  - Need to use **cross validation**
+  
+  - Randomly divide data into **test** and **training** subsets
+
+```{r}
+# Divide data 80-20
+
+# Estimate regression on training data
+```
+
+---
+
+# 4: Calculate RMSE
+
+- $\varepsilon = Y - \hat{Y}$
+
+--
+
+  - $\varepsilon$ = errors (aka "residuals")
+  
+  - $\hat{Y}$ = predicted outcomes
+  
+--
+
+- Predict $\hat{Y}$ on **test** data
+
+--
+
+$$RMSE = \sqrt{\frac{1}{n}\sum_{i}^{n}(Y_i - \hat{Y}_i)^2}$$
+
+--
+  
+```{r}
+# Calculate predicted values
+
+# Calculate errors
+
+# Calculate RMSE
+```
+
+---
+
+# 5: Re-do with new X!
+
+```{r}
+# Step 1: Identify new variable
+
+# Step 2: Visualize new variable
+
+# Step 3: Train model
+
+# Step 4: Calculate RMSE
+```
+
+
+---
+
+# Two Camps Revisited
+
+--
+
+- Regression is great for **theory testing**
+
+--
+
+  - Results tell us something **meaningful** about our theory
+  
+--
+
+- But if all we care about is **prediction**...?
+
+--
+
+  - Want to test every possible predictor (and combinations)
+  
+  - Don't care about **relationships**
+  
+  - Just care about **accuracy**
+  
+--
+
+- Algorithms can save us time!
+
+--
+
+  - Random Forests
+  
+  - LASSO
+  
+---
+
+# Random Forests
+
+- Identify the best "partition" (split) that divides the data
+
+--
+
+<center><img src="./figs/rfdemo.gif" width = 70%></center>
+
+--
+
+- In `R`: `ranger`
+
+--
+
+  - `formula = Y ~ .`
+  
+  - Algorithm handles CV for you!
+
+
+---
+
+# LASSO
+
+--
+
+- "Least Absolute Shrinkage and Selection Operator"
+
+--
+
+- Concept: Make it hard for predictors to matter
+
+--
+
+  - Practice: $\lambda$ penalizes how many variables you can include
+  
+  - $\sum_{i = 1}^n (y_i - \sum_j x_{ij}\beta_j)^2 + \lambda \sum_{j=1}^p |\beta_j|$
+  
+  - Minimize the errors, but penalize for each additional predictor
+  
+  - You *could* kitchen-sink a regression and get super low errors
+  
+  - LASSO penalizes you from throwing everything into the kitchen sink
+
+--
+
+- In `R`, need to install a new package! `install.packages('glmnet')`
+
+```{r}
+require(glmnet)
+```
+
+---
+
+# LASSO
+
+- Function doesn't use formulas
+
+--
+
+- Give it the raw data instead, divided into `Y` (outcome) and `X` (predictors)
+
+--
+
+```{r}
+mv <- mv %>%
+  mutate(log_gross=log(gross),
+         log_budget = log(budget))%>%
+  select(log_gross,log_budget,rating,genre,runtime,bechdel_score,year)%>%
+  drop_na()
+
+Y <- mv %>%
+  select(log_gross)
+
+X <- mv %>%
+  select(-log_gross)
+```
+
+
+---
+
+# LASSO
+
+- Also note that `glmnet` requires factors to be dummies
+
+--
+
+- Another new package: `install.packages('fastDummies')`
+
+```{r}
+X <- X %>%
+  mutate_if(is.character,as.factor) %>%
+  fastDummies::dummy_cols(remove_first_dummy = T,
+                          remove_selected_columns = T)
+```
+
+--
+
+- Now estimate!
+
+```{r}
+lassFit <- glmnet(x = as.matrix(X),
+                  y = as.matrix(Y))
+```
+
+---
+
+# LASSO
+
+```{r}
+plot(lassFit)
+```
+
+---
+
+# LASSO
+
+```{r}
+betas <- lassFit$beta %>%
+  as.matrix() %>%
+  data.frame() %>%
+  mutate(predictor = row.names(.)) %>%
+  as_tibble() %>%
+  gather(penalty,coef,-predictor) %>%
+  mutate(penalty = as.numeric(gsub('s','',penalty))) %>%
+  group_by(predictor) %>%
+  arrange(penalty) %>%
+  filter(coef != 0) %>%
+  slice(1) %>%
+  left_join(data.frame(penalty = 1:length(lassFit$lambda),
+                       lambda = lassFit$lambda))
+```
+
+---
+
+# LASSO
+
+```{r}
+betas %>%
+  ggplot(aes(x = lambda,y = reorder(predictor,lambda))) + 
+  geom_bar(stat = 'identity') + 
+  labs(title = 'LASSO results',
+       x = 'Lambda',y = NULL)
+```
+
+
+
