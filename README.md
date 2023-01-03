@@ -180,6 +180,7 @@ Each lecture's materials will be released according to the following schedule:
 ### 1\. Intro to Data Science
 
 Lecture Content (2023/01/09):
+
 	* Slides
 	* Homework
 	* Problem Set
