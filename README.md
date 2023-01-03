@@ -308,20 +308,20 @@ Lecture Content (2023/03/27): Classification Part 2 - Using models for predictio
 
 Lecture Content (2023/04/03): Clustering - *k*-means clustering
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
-* **Problem Set 8:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_8.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/8_Clustering_NLP/code/Clustering_NLP_part1_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part1_hw.Rmd)
+* **Problem Set 8:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/ds1000_problem_set_8.Rmd)
 
 Lecture Content (2023/04/05): NLP Part 1 - *k*-means clustering on text
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part2_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part2_hw.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part2_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/8_Clustering_NLP/code/Clustering_NLP_part2_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part2_hw.Rmd)
 
 Lecture Content (2023/04/10): NLP Part 2 - Sentiment analysis
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part3_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
-* **Problem Set 9:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_9.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part3_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/8_Clustering_NLP/code/Clustering_NLP_part3_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/Clustering_NLP_part3_hw.Rmd)
+* **Problem Set 9:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/8_Clustering_NLP/code/ds1000_problem_set_9.Rmd)
 
 **Review Session (2023/04/12): Review of Clustering section.**
 
@@ -331,13 +331,12 @@ Lecture Content (2023/04/10): NLP Part 2 - Sentiment analysis
 
 Lecture Content (2023/04/17): Random forests, neural networks, image-as-data
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/9_Advanced_Topics/code/Advanced_Topics_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/9_Advanced_Topics/code/Advanced_Topics_slides.html#1)
+* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/9_Advanced_Topics/code/Advanced_Topics_hw.Rmd)
 
 Lecture Content (2023/04/19): Ethics in data science
 
-* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/7_Classification/code/Classification_part1_slides.html#1)
-* Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part1_hw.Rmd)
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/9_Advanced_Topics/code/Ethics_slides.pdf); [HTML](https://www.jamesbisbee.com/DS1000_S2023/Lectures/9_Advanced_Topics/code/Ethics_slides.html#1)
 
 *[Back to ToC](#table-of-contents)*
 
