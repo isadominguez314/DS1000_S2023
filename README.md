@@ -181,9 +181,9 @@ Each lecture's materials will be released according to the following schedule:
 
 Lecture Content (2023/01/09):
 
-	* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf)
-	* Homework
-	* Problem Set
+* Slides: [PDF](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/1_Intro_Data_Science/code/Intro_Data_Science_slides.pdf)
+* Homework
+* Problem Set
 
 *[Back to ToC](#table-of-contents)*
 
