@@ -300,7 +300,7 @@ Lecture Content (2023/03/27): Classification Part 2 - Using models for predictio
 * Homework: [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/Classification_part3_hw.Rmd)
 * **Problem Set 7:** [RMD](https://github.com/jbisbee1/DS1000_S2023/blob/main/Lectures/7_Classification/code/ds1000_problem_set_7.Rmd)
 
-**Review Session (2023/03/29): Review of Regression section.**
+**Review Session (2023/03/29): Review of Classification section.**
 
 *[Back to ToC](#table-of-contents)*
 
