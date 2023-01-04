@@ -15,15 +15,6 @@ Course Material for DS1000: How Data Shape our World
 ## Overview
 The target audience is someone who is interested in Data Science, but who has no prior experience. The class is designed to be application-forward -- demonstrating what you can do with the tools of data science in the hopes of motivating and encouraging students to go deeper and further. As an introductory class with no prerequisites, the statistical and programming fundamentals behind what we do is only briefly mentioned; the goal is to provide a sense of what can be done with data science rather than to provide a comprehensive foundation on a smaller set of topics. The contents of this repository represent a work-in-progress and revisions and edits are likely frequent.
 
-The course is motivated around several topics.
-
-0. Introduction to Data Science, Ethics, R and Data Wrangling
-1. Univariate Description and Visualization
-2. Conditional Variation using Conditional Means
-3. Conditional Variation using linear regression
-4. Clustering
-5. Classification using binary outcomes and logistic regressions
-
 The main text for the course is "R For Data Science" which can accessed free online [here](https://r4ds.had.co.nz/introduction.html). 
 
 *[Back to ToC](#table-of-contents)*
@@ -42,13 +33,17 @@ You are encouraged to post questions within your TA channel (formatted as **#[TA
 
 Here is the list of channels you should see upon joining the Campuswire workspace:
 
-- **#lectures**: A live room in which you can post questions in real time during the lectures. Each class I will try to keep an eye on this space and answer questions or respond to comments as I go.
+- **Class feed**: A space to post questions and respond to other posts.
 
 - **#announcements**: A space for all course announcements.
 	
-- **#ta-[TA Last name]**: A channel dedicated to your TA group. You will only have access to your assigned TA.
-	
-- **#data-science-news**: A space for you to share and discuss stories you've seen in the news or on social media that are relevant to our class.
+- **#general**: A space for you to share and discuss stories you've seen in the news or on social media that are relevant to our class.
+
+- **Calendar**: A calendar containing all lectures, due dates, office hours, and labs.
+
+- **Files**: A space for course materials (**NOT USED. VISIT BRIGHTSPACE INSTEAD.**)
+
+- **Grades**: A space for grades (**NOT USED. VISIT BRIGHTSPACE INSTEAD.**)
 	
 ### GitHub
 I have created a [`GitHub`](https://github.com/jbisbee1/DS1000-S2023) repository to prepare and share all course-related content. This very syllabus is available as the repository's README and all links below are connected to the appropriate folders, sub-folders, and files in this repository. 
@@ -135,11 +130,14 @@ The observance of religious holidays (activities observed by a religious group o
 
 ## Office Hours
 * Prof. Bisbee: M & W 11AM to 12PM; The Commons Room 353
-* TA Ganyiu: T & TH 2PM to 3PM, Sun TBD, F 9AM to 11AM (HW review only); Zoom link available on [Campuswire](https://campuswire.com/p/G175ABCF3)
-* TA Kannan: M & T 4PM to 5PM; Zoom link available on [Campuswire](https://campuswire.com/p/G175ABCF3)
-* TA Tan: TH 4PM to 6PM; Zoom link available on [Campuswire](https://campuswire.com/p/G175ABCF3)
-* TA Vig: F 2PM to 4PM; Zoom link available on [Campuswire](https://campuswire.com/p/G175ABCF3)
-* TA Yan: W 4PM to 6PM; Zoom link available on [Campuswire](https://campuswire.com/p/G175ABCF3)
+* TA Mubarak Ganyiu: TBD
+* TA Quishi Yan: TBD
+* TA Sriram Kannan: TBD
+* TA Daniel Rosen: TBD
+* TA Promod Rajauru: TBD
+* TA Minwoo Sohn: TBD
+* TA Mengqing Chen: TBD
+* TA Yuting Lu: TBD
 
 *[Back to ToC](#table-of-contents)*
 
