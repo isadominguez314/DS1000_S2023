@@ -1,0 +1,315 @@
+---
+title: "Problem Set 10"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Due Date: 2022/12/04 @ 11:59PM CST"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Getting Set Up
+
+If you haven't already, create a folder for this course, and then a subfolder called `Topic10_Classification`, and two additional subfolders within `code` and `data`.
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Change the title to `"DS1000: Problem Set 10"` and the author to your full name. Save this file as `[LAST NAME]_ps10.Rmd` to your `code` folder.
+
+If you haven't already, download the `admit_data.rds` file from the course [github page](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic10_Classification/data/admit_data.rds) and save it to your `data` folder.
+
+```{r,include=F}
+knitr::opts_chunk$set(error=TRUE)
+```
+
+Require `tidyverse`, `tidymodels`, and `modelr` and then load the `admit_data.rds` data to `ad`. Finally, `set.seed(123)` once at the very beginning, to ensure consistency in results throughout the problem set.
+```{r}
+set.seed(123)
+require(tidyverse)
+library(tidymodels)
+require(modelr)
+ad <- readRDS(file="../data/admit_data.rds")
+```
+
+
+## Question 1 [4 points]
+
+Create a classification algorithm using linear regression that predicts attendance (`yield`) as a function of the following $X$ predictors:
+
+- `distance`
+- `income`
+- `sat`
+- `gpa`
+- `visit`
+- `registered`
+- `legacy`
+- `net_price`
+
+Evaluate the model performance using `roc_auc` based on cross validation with 100 iterations, using an 80-20% split of the data. Then run a second algorithm that is identical to the first in every way, except that `income` is logged (`log_income = log(income)`). Compare the average AUC for the two models and discuss which is better.
+
+**HINTS**:
+
+* [Linear regression for classification](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#81)
+
+* [Cross validation loop](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part3_slides.html#23)
+
+```{r}
+ad <- ad %>%
+  mutate(log_income = log(income))
+
+cvRes_lmRaw <- NULL
+cvRes_lmLog <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train <- ad %>% slice(inds)
+  test <- ad %>% slice(-inds)
+  
+  # Raw income
+  mTrainRaw <- lm(yield ~ distance + income + sat + gpa + visit + registered + legacy + net_price,train)
+  
+  toEval <- test %>%
+    mutate(preds = predict(mTrainRaw,newdata = test)) %>%
+    mutate(truth = factor(yield,levels = c('1','0')))
+
+  cvRes_lmRaw <- roc_auc(toEval,truth = 'truth',estimate = 'preds') %>%
+    mutate(cvInd = i,
+           algo = 'linear_raw') %>%
+    bind_rows(cvRes_lmRaw)
+  
+  # Logged income
+  mTrainLog <- lm(yield ~ distance + log_income + sat + gpa + visit + registered + legacy + net_price,train)
+  
+  toEval <- test %>%
+    mutate(preds = predict(mTrainLog,newdata = test)) %>%
+    mutate(truth = factor(yield,levels = c('1','0')))
+
+  cvRes_lmLog <- roc_auc(toEval,truth = 'truth',estimate = 'preds') %>%
+    mutate(cvInd = i,
+           algo = 'linear_log') %>%
+    bind_rows(cvRes_lmLog)
+}
+
+mean(cvRes_lmLog$.estimate)
+mean(cvRes_lmRaw$.estimate)
+```
+
+> - Based on this analysis, the model using logged income performs better, given an AUC of `r round(mean(cvRes_lmLog$.estimate),3)` compared to the raw AUC of `r round(mean(cvRes_lmRaw$.estimate),3)`.
+
+## Question 2 [4 points]
+
+Re-do question 1 but use a logistic regression instead of a linear regression. You should have 100 AUC scores for each of the four algorithms by the end of this question:
+
+- `lm` with raw `income`
+- `lm` with `log_income`
+- `glm` with raw `income`
+- `glm` with `log_income`
+
+Plot these AUC scores using `geom_boxplot()`, and discuss which of the four algorithms performs best. 
+
+**NB:** Make sure that `warning = F` in the first part of the beginning of the `r` code chunk!
+
+
+**HINTS**:
+
+* [Logit regression](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part2_slides.html#35)
+
+```{r,warning = F}
+cvRes_glmRaw <- NULL
+cvRes_glmLog <- NULL
+for(i in 1:100) {
+  inds <- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train <- ad %>% slice(inds)
+  test <- ad %>% slice(-inds)
+  
+  # Raw income
+  mTrainRaw <- glm(yield ~ distance + income + sat + gpa + visit + registered + legacy + net_price,train,
+                   family = binomial(link = 'logit'))
+  
+  toEval <- test %>%
+    mutate(preds = predict(mTrainRaw,newdata = test,type = 'response')) %>%
+    mutate(truth = factor(yield,levels = c('1','0')))
+
+  cvRes_glmRaw <- roc_auc(toEval,truth = 'truth',estimate = 'preds') %>%
+    mutate(cvInd = i,
+           algo = 'logit_raw') %>%
+    bind_rows(cvRes_glmRaw)
+  
+  # Logged income
+  mTrainLog <- glm(yield ~ distance + log_income + sat + gpa + visit + registered + legacy + net_price,train,
+                   family = binomial(link = 'logit'))
+  
+  toEval <- test %>%
+    mutate(preds = predict(mTrainLog,newdata = test,type = 'response')) %>%
+    mutate(truth = factor(yield,levels = c('1','0')))
+
+  cvRes_glmLog <- roc_auc(toEval,truth = 'truth',estimate = 'preds') %>%
+    mutate(cvInd = i,
+           algo = 'logit_log') %>%
+    bind_rows(cvRes_glmLog)
+}
+
+toplot <- cvRes_glmLog %>%
+  bind_rows(cvRes_glmRaw) %>%
+  bind_rows(cvRes_lmRaw) %>%
+  bind_rows(cvRes_lmLog)
+
+toplot %>%
+  ggplot(aes(x = .estimate,y = reorder(algo,.estimate))) + 
+  geom_boxplot() + 
+  labs(x = 'AUC',
+       y = 'Classification Algorithm')
+
+```
+
+> - Based on this analysis, I would choose the logistic regression using the un-logged income data. 
+
+## Question 3 [4 points]
+
+Based on the result to question 2, choose the best classification algorithm and train it on the full data. Calculate the specificity and sensitivity across different thresholds ranging from zero to one, and plot these as different colored lines, just as you did in PSet 9, Q4. What is the optimal threshold to balance the trade-off between sensitivity and specificity based on this plot? **HINT**: Use `geom_vline()` and test different `xintercept` values until you nail the intersection between the two lines.
+
+**HINTS**:
+
+* [Threshold loop](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#95)
+
+```{r,warning = F}
+mFinal <- glm(yield ~ distance + income + sat + gpa + visit + registered + legacy + net_price,ad,
+                   family = binomial(link = 'logit'))
+
+ad <- ad %>%
+  mutate(preds = predict(mFinal,type = 'response'))
+
+toplot <- NULL
+for(thresh in seq(0,1,by = 0.025)) {
+  toplot <- ad %>%
+  mutate(pred_attend = ifelse(preds > thresh,1,0)) %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = nStudents / total_attend) %>%
+  ungroup() %>%
+  mutate(accuracy = sum((yield == pred_attend)*nStudents) / sum(nStudents)) %>%
+  # filter(yield == pred_attend) %>% Also possible to filter here for either specificity or sensitivity
+  mutate(threshold = thresh) %>%
+    bind_rows(toplot)
+}
+
+# Plot relationship between threshold and sens/spec
+toplot %>%
+  mutate(metric = ifelse(yield == 1 & pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 & pred_attend == 0,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  ggplot(aes(x = threshold,y = prop,color = metric)) + 
+  geom_line() + 
+  scale_x_continuous(breaks = seq(0,1,by = .05)) + 
+  geom_vline(xintercept = .615) + 
+  labs(title = 'Sensitivity and Specificity by Threshold',
+       subtitle = 'Model: Linear Regression',
+       x = 'Threshold',
+       y = 'Proportion Correct',
+       color = 'Metric')
+```
+
+## Question 4 [4 points + 1 extra credit]
+
+Try to increase the number of admitted students with incomes under \$50,000 by 200. To do this, you will first need to calculate the total number of admitted students currently with incomes under \$50,000, in order to know what number you should target. Then, create a hypothetical dataset using `data_grid()` and set `net_price` to be \$5k cheaper for those with incomes less than \$50k. Calculate the predicted number of admitted students with incomes less than \$50k by using the optimal threshold identified in Q3. Does reducing the price for lower-income students by \$5k achieve the goal of 200 more admits in this category? If not, try tweaking the price further until you achieve the goal. Is this possible? EXTRA CREDIT: Explain why the current number of attending students under \$50k is larger than the predicted number of attending students after reducing `net_price` by \$5,000.
+
+**HINTS**:
+
+* [Predicting on hypothetical data via `data_grid()`](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part3_slides.html#37)
+
+* [Predicting on hypothetical raw data](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part3_slides.html#51)
+
+
+```{r}
+# 77 lower-income students currently admitted. The goal is therefore 277.
+ad %>%
+  count(yield,income < 50000)
+
+hypo <- ad %>%
+  mutate(net_price = ifelse(income < 50000,net_price - 5000,net_price))
+
+hypo %>%
+  mutate(preds = predict(mFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_attend = ifelse(preds > .615,1,0)) %>%
+  count(pred_attend,income < 50000)
+
+# EC: Our model incorrectly predicts that 74 lower-income students will not attend
+ad %>%
+  mutate(preds = predict(mFinal,type = 'response')) %>%
+  mutate(pred_attend = ifelse(preds > .615,1,0)) %>%
+  count(pred_attend,income < 50000,yield) %>%
+  spread(yield,n)
+
+# Tweaking
+hypo <- ad %>%
+  mutate(net_price = ifelse(income < 50000,net_price - 45000,net_price))
+
+hypo %>%
+  mutate(preds = predict(mFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_attend = ifelse(preds > .615,1,0)) %>%
+  count(pred_attend,income < 50000)
+```
+
+> - According to our classification algorithm, it is not possible to increase attendance for lower-income students based solely on reducing the net price for those with incomes under \$50k. We would need to reduce tuition so far that we would be paying them to attend in order to achieve this. EC: Our algorithm, combined with our optimal threshold identified in Q3, does a particularly poor job predicting attendance among lower-income students. Specifically, our model predicts that 74 of the 77 total students who actually did attend would not. This is why reducing the net price by \$5k initially suggests that this reduces attendance.
+
+## Question 5 [4 points]
+
+Re-do question 4, while also achieving the college's two constraints: 
+
+1. Maintain total revenues of at least \$30m
+2. Maintain total attendance at least 1,466
+
+Is this possible to achieve?
+
+```{r}
+summary(mFinal)
+hypo <- ad %>%
+  mutate(net_price = ifelse(income < 50000,net_price - 20000,
+                            ifelse(income > 50000,net_price + 6000,net_price)),
+         visit = ifelse(income < 50000,1,visit),
+         registered = ifelse(income < 50000,1,registered),
+         legacy = ifelse(income < 50000,1,legacy),
+         gpa = ifelse(income < 50000,3.9,gpa),
+         distance = ifelse(income < 50000,100,distance))
+
+hypo %>%
+  mutate(preds = predict(mFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_attend = ifelse(preds > .615,1,0)) %>%
+  filter(pred_attend == 1) %>%
+  summarise(tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n(),
+            lowincomeAttend = sum(income < 50000))
+```
+
+> - It is difficult to achieve, although possible if we assume we can (1) increase visits and registration among lower-income students, (2) target legacy lower-income students, (3) target lower-income students with a GPA of at least 3.9, and (4) target lower-income students who live within 100 miles. In addition to these targeting efforts, we also will need to reduce the net-price for lower-income students by \$20,000, which we offset by increasing the cost for students above \$50,000 by \$6,000.
+
+## Question 6 [4 EC points]
+
+Now try and achieve BOTH goals subject to BOTH constraints. Specifically:
+
+1. **Goal:** Increase average SAT to 1300
+2. **Goal:** Increase lower-income students by 200
+3. **Constraint:** Maintain revenues of at least \$30m
+4. **Constraint:** Maintain total attendees of roughly 
+
+```{r}
+summary(mFinal)
+hypo <- ad %>%
+  mutate(net_price = ifelse(income < 50000,net_price - 20000,
+                            ifelse(income > 50000,net_price + 6000,net_price)),
+         visit = ifelse(income < 50000,1,visit),
+         registered = ifelse(income < 50000,1,registered),
+         legacy = ifelse(income < 50000,1,legacy),
+         sat = rnorm(nrow(ad),m = 1300,sd = 100),
+         gpa = ifelse(income < 50000,4,gpa),
+         distance = ifelse(income < 50000,150,distance))
+
+hypo %>%
+  mutate(preds = predict(mFinal,newdata = hypo,type = 'response')) %>%
+  mutate(pred_attend = ifelse(preds > .615,1,0)) %>%
+  filter(pred_attend == 1) %>%
+  summarise(tot_rev = scales::dollar(sum(net_price)),
+            totAttend = n(),
+            avgSAT = round(mean(sat)),
+            lowincomeAttend = sum(income < 50000))
+```

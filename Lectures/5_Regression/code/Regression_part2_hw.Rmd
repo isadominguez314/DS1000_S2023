@@ -1,9 +1,15 @@
 ---
-title: "Topic 8. Conditional Variation, Part 2"
-author: "Prof. Bisbee, Vanderbilt University"
-date: "2022-10-19"
+title: "Regression Part 2"
+subtitle: "Homework"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Due Date: 2023-02-27"
 output: html_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,error=TRUE,warning = FALSE,message = FALSE)
+```
 
 ## Introduction
 
@@ -263,146 +269,3 @@ We are now finding that adding the rating *reduces* the fit of our model, as evi
 ## Last Note
 
 Remember that we need to carefully distinguish between categorical variables and continuous variables when including them in our models. If we're using categorical variables we'll need to pre-process the data in order to let the model know that these variables should be included as categorical variables, with an excluded reference category.
-
-
-## Code Chunks for Lecture
-
-```{r}
-# Slide 7
-require(tidyverse)
-mv <- read_rds('../data/mv.Rds')
-mv <- mv %>%
-  mutate(log_gross = log(gross),
-         log_budget = log(budget))
-m1 <- lm(log_gross ~ log_budget,mv)
-
-# Slide 9
-e <- resid(m1)
-se <- e^2
-mse <- mean(se)
-rmse <- sqrt(mse)
-rmse
-
-# Slide 12
-# Create list of row numbers at random
-inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F) # NB: Set replace = FALSE for CV
-# Use slice(inds) to get training data
-train <- mv %>% 
-  slice(inds)
-# Use slice(-inds) to get test data
-test <- mv %>%
-  slice(-inds)
-
-# Slide 13
-m2 <- lm(log_gross ~ log_budget,train)
-# predict() function on a new dataset
-test$preds <- predict(m2,newdata = test)
-# Now calculate RMSE on the new dataset
-e <- test$log_gross - test$preds
-se <- e^2
-mse <- mean(se,na.rm=T)
-rmse <- sqrt(mse)
-rmse
-
-# Slide 15
-set.seed(123)
-bsRes <- NULL
-for(i in 1:100) {
-  inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
-  train <- mv %>% slice(inds)
-  test <- mv %>% slice(-inds)
-  mTrain <- lm(log_gross ~ log_budget,train)
-  test$preds <- predict(mTrain,newdata = test)
-  rmse <- sqrt(mean((test$log_gross - test$preds)^2,na.rm=T))
-  bsRes <- c(bsRes,rmse)
-}
-mean(bsRes)
-
-# Slide 16
-data.frame(rmseBS = bsRes) %>%
-  ggplot(aes(x = rmseBS)) + 
-  geom_density() + 
-  geom_vline(xintercept = mean(bsRes),linetype = 'dashed')
-
-# Slide 17
-summary(lm(log_gross ~ log_budget + score,mv))
-
-# Slide 18
-set.seed(123)
-bsRes <- NULL
-for(i in 1:100) {
-  inds <- sample(1:nrow(mv),size = round(nrow(mv)/2),replace = F)
-  train <- mv %>% slice(inds)
-  test <- mv %>% slice(-inds)
-  mTrain1 <- lm(log_gross ~ log_budget,train)
-  mTrain2 <- lm(log_gross ~ log_budget + score,train)
-  bsRes <- test %>%
-    mutate(preds1 = predict(mTrain1,newdata = test),
-           preds2 = predict(mTrain2,newdata = test)) %>%
-    summarise(rmse1 = sqrt(mean((log_gross - preds1)^2,na.rm=T)),
-              rmse2 = sqrt(mean((log_gross - preds2)^2,na.rm=T))) %>%
-    bind_rows(bsRes)
-}
-
-# Slide 20
-mvAnalysis <- mv %>% 
-  select(log_gross,log_budget,score) %>%
-  drop_na()
-
-# Slide 21
-bsRes <- NULL
-for(i in 1:100) {
-  inds <- sample(1:nrow(mvAnalysis),size = 2000,replace = F)
-  train <- mvAnalysis %>% slice(inds)
-  test <- mvAnalysis %>% slice(-inds)
-  mTrain1 <- lm(log_gross ~ log_budget,train)
-  mTrain2 <- lm(log_gross ~ log_budget + score,train)
-  bsRes <- test %>%
-    mutate(preds1 = predict(mTrain1,newdata = test),
-           preds2 = predict(mTrain2,newdata = test)) %>%
-    summarise(rmse1 = sqrt(mean((log_gross - preds1)^2,na.rm=T)),
-              rmse2 = sqrt(mean((log_gross - preds2)^2,na.rm=T))) %>%
-    bind_rows(bsRes)
-}
-bsRes %>%
-  summarise_all(mean,na.rm=T)
-
-# Slide 22
-mv %>%
-  count(bechdel_score)
-
-# Slide 23
-mv <- mv %>%
-  mutate(bechdel_bin = ifelse(bechdel_score == 3,1,0)) %>%
-  mutate(bechdel_factor=recode_factor(bechdel_bin,
-                                      `1`="Pass",
-                                      `0`="Fail",
-                                      ))
-
-# Slide 24
-summary(lm(log_gross ~ bechdel_factor,mv))
-
-# Slide 26
-mBechCtrl <- lm(log_gross ~ log_budget + bechdel_factor,mv)
-
-# Slide 28
-mv %>%
-  count(rating)
-
-# Slide 29
-mvAnalysis <- mv %>%
-  filter(!rating %in% c('Approved','TV-14','TV-MA','TV-PG','X'))
-
-# Slide 30
-summary(lm(log_gross ~ rating,mvAnalysis))
-
-# Slide 31
-mvAnalysis <- mvAnalysis %>%
-  mutate(rating = factor(rating,
-                         levels = c('R','PG-13','PG','G','Not Rated')))
-mRating2 <- lm(log_gross ~ rating,mvAnalysis)
-
-
-
-
-```

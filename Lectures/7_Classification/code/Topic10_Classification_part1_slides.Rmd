@@ -1,0 +1,957 @@
+---
+title: "Classification"
+subtitle: "Part 1"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Lecture Date: 2022/11/14\n Slides Updated: `r Sys.Date()`"
+output:
+  xaringan::moon_reader:
+    # self_contained: true
+    chakra: libs/remark-latest.min.js
+    lib_dir: libs
+    css:
+      - default
+      - css/lexis.css
+      - css/lexis-fonts.css
+    #seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      #ratio: "16:9"
+
+---
+
+```{css,echo = F}
+.small .remark-code { /*Change made here*/
+  font-size: 85% !important;
+}
+.tiny .remark-code { /*Change made here*/
+  font-size: 50% !important;
+}
+```
+
+```{r,include=F}
+options(width=60)
+knitr::opts_chunk$set(fig.align='center',fig.width=9,fig.height=5)
+def.chunk.hook  <- knitr::knit_hooks$get("chunk")
+knitr::knit_hooks$set(chunk = function(x, options) {
+  x <- def.chunk.hook(x, options)
+  ifelse(options$size != "normalsize", paste0("\n \\", options$size,"\n\n", x, "\n\n \\normalsize"), x)
+})
+```
+
+# Agenda
+
+1. Classification
+
+2. College Admissions
+
+---
+
+# Definitions
+
+- *Classification:* predicting the **class** of given data points via **predictive modeling**
+
+--
+
+  - *Class*: AKA targets, labels, or categories
+  
+--
+
+  - *Predictive Modeling*: Approximate mapping function $f: X \rightarrow Y$
+  
+--
+
+  - $X$: predictor variables
+  
+  - $Y$: outcome variable
+  
+  - $f$: ??
+  
+---
+
+# Mapping Functions
+
+- We have already used some mapping functions!
+
+--
+
+- Linear Regression?
+
+--
+
+  - $f$: $Y = \alpha + \beta X + \varepsilon$
+  
+--
+
+- Regression Trees?
+
+--
+
+  - $f$: $Y_c = \frac{1}{n_c} \sum_{i \in c} \mathbb{I}_{i}(\mathbf{X}_i)$
+  
+--
+
+- Underlying idea: $X$ contain information about $Y$
+
+---
+
+# Federalist Papers
+
+- We wanted to identify who authored the 11 anonymous essays
+  
+--
+
+- Used regression to predict authorship
+
+--
+
+  - Regression was our mapping function
+  
+--
+
+  - $X$ were words used by Hamilton or Madison
+  
+--
+
+  - $Y$ was Hamilton (+1) and Madison (-1)
+  
+---
+
+# Federalist Papers
+
+```{r,echo = F,message = F,warning = F}
+require(tidyverse)
+require(tidytext)
+require(ggridges)
+corpus.tidy <- readRDS(file="../data/FederalistPaperCorpusTidy.Rds")
+
+tokens <- corpus.tidy %>%
+  unnest_tokens(word, text) %>% 
+  mutate(word = str_replace_all(word, "\\d+", "")) %>%
+  filter(word != "")
+
+authorWords <- tokens %>%
+  count(author,word) %>%
+  filter(author %in% c('hamilton','madison')) %>%
+  spread(author,n) %>%
+  rowwise() %>%
+  mutate(ratio = hamilton / madison,
+         total = sum(hamilton,madison,na.rm=T)) %>%
+  filter(total > 20 & (ratio > 5 | ratio < 1))
+
+dtm <- tokens %>%
+  count(author,document,word) %>%
+  group_by(document) %>%
+  mutate(totWords = sum(n)) %>%
+  ungroup() %>%
+  mutate(rate = n*1000 / totWords)
+
+dat <- dtm %>%
+  select(-n) %>%
+  rename(authorFOUNDER = author) %>%
+  spread(word,rate,fill = 0) %>%
+  mutate(score = ifelse(authorFOUNDER == 'hamilton',1,
+                        ifelse(authorFOUNDER == 'madison',-1,NA)))
+
+disc_words <- authorWords %>%
+              ungroup() %>%
+              arrange(-ratio) %>%
+              slice(1:5) %>%
+              bind_rows(authorWords %>%
+                          ungroup() %>%
+                          arrange(ratio) %>%
+                          slice(1:5))
+Xs <- paste(disc_words$word,collapse = ' + ')
+form <- paste0('score ~ ',Xs)
+mHam <- lm(as.formula(form),dat)
+
+dat %>%
+  mutate(predAuthor = predict(mHam,newdata = dat)) %>%
+  filter(authorFOUNDER %in% c('contested','hamilton','madison')) %>%
+  ggplot(aes(x = document,y = predAuthor,color = authorFOUNDER)) + 
+  geom_point(size = 3) + 
+  geom_hline(yintercept = 0,linetype = 'dashed') + 
+  labs(title = 'Predicted Authorship of Federalist Papers',
+       x = 'Federalist Paper Number',
+       y = 'Predicted Author\n(<0 = Madison, >0 = Hamilton)') + 
+  theme_ridges()
+```
+
+---
+
+# Prediction
+
+- Those were continuous measures of people!
+  
+--
+
+  - Then converted into a prediction: $$pred \geq 0 \rightarrow Hamilton$$
+  
+--
+
+- **This was actually a (simple) version of classification!**
+
+--
+
+  - We **classified** 11 documents as either Hamilton or Madison
+
+---
+
+# College Admissions
+
+<center><img src="https://www.curacubby.com/hubfs/Curacubby_March2022/Images/5fb814029f2614f386d260f1_iVGtj4dy_OUgZcvBtAb__7gGzmeuWNIjqvDfukNUE8JzKNvXPkRuq1wMCTZsgRXZeVPLRtCfuF_MZSNmJipAEHb8wkcoxSpTsWCN8Aiqy7XxH8RwvS7RDDUHbR49cWpw1mAWlu_O.png" width="90%"></center>
+
+--
+
+- [A live interactive infographic](https://iraps.ucsc.edu/iraps-public-dashboards/student-demand/admissions-funnel.html)
+
+---
+
+# College Admissions
+
+- The math of college admissions
+
+--
+
+1. **Tuition** ($)
+  
+--
+
+  - How they stay in business
+  
+--
+
+2. **Reputation**
+
+--
+
+  - Higher reputation &rarr; more **tuition**
+  
+--
+
+  - Based on academic qualifications
+  
+
+---
+
+# Data Science!
+
+- This is a big industry for data scientists!
+
+--
+
+- Why?
+
+--
+
+  - If you screw this up, you lose A LOT OF MONEY
+  
+--
+
+  - Too few students &rarr; not enough money to operate
+  
+  - Too many students &rarr; not enough capacity &rarr; bad reputation &rarr; not enough money
+  
+--
+
+- Thus, we need people who are good at **classification**
+
+---
+
+# The Data
+
+```{r, message=FALSE}
+library(tidyverse)
+library(scales)
+ad<-read_rds("../data/admit_data.rds")%>%ungroup()
+glimpse(ad)
+```
+
+---
+
+# Our Task
+
+- Colleges hire data scientists to do more than just predict yield
+
+--
+
+- College **goals**: Increase reputation
+
+--
+
+  - Increase average SAT score to 1300
+  
+  - Admit at least 200 more students with incomes under $50,000
+  
+--
+
+- College **constraints**: Stay in operation!
+  
+--
+
+  - Maintain total revenues of $30m
+  
+  - Maintain entering class size of 1,500
+
+---
+
+# How do we do this?
+
+- Tuition discounting
+
+--
+
+  - Need-based aid vs merit-based aid
+  
+--
+
+- **Need-based aid**: $$need_{aid} = 500 + (income / 1000 - 100)*-425$$
+
+--
+
+  - For every $1,000 less than $100,000, student receives +$425
+  
+--
+
+```{r,message=F}
+require(ggridges)
+p <- ad %>%
+  ggplot(aes(x = income,y = need_aid)) + 
+  geom_point() + 
+  scale_x_continuous(labels = dollar,
+                     breaks = c(0,1e05,3e05,6e05,9e05)) + 
+  scale_y_continuous(labels = dollar) + 
+  theme_ridges()
+```
+
+---
+
+# Need-based aid
+
+```{r}
+p
+```
+
+---
+
+# Merit-based aid
+
+$$merit_{aid} = 5000 + (sat / 1001500)$$
+
+--
+
+- For every 10 points in SAT scores above 1250, student receives extra $1,500
+
+```{r}
+p <- ad %>%
+  ggplot(aes(x = sat,y = merit_aid)) + 
+  geom_point() + 
+  scale_y_continuous(labels = dollar) + 
+  theme_ridges()
+```
+
+---
+
+# Merit-based aid
+
+```{r}
+p
+```
+
+---
+
+# So how do we do this?
+
+- Use tuition discounting to attract certain students
+
+--
+
+  - Those with higher SAT scores
+  
+  - Those with lower incomes
+  
+--
+
+- Could give aid to everyone who fits these criteria
+
+--
+
+- But this is inefficient! Giving money to those would might not attend
+
+--
+
+- Want to **target** the aid toward those most likely to attend
+
+--
+
+- Again...**prediction**
+
+---
+
+# Prediction
+
+$$Y = \alpha + \beta_1 X_1 + \beta_2 X_2 + \dots + \varepsilon$$
+
+--
+
+- $Y$: yield
+
+--
+
+- $X$: ??
+
+--
+
+- Look at univariate & conditional relationships
+
+---
+
+# The Data
+
+- Outcome $Y$: `yield`
+
+```{r}
+ad %>%
+  summarise(`Yield Rate` = percent(mean(yield)))
+```
+
+--
+
+- Multivariate visualization?
+
+---
+
+# The Data
+
+```{r}
+ad %>%
+  group_by(yield) %>%
+  summarise_at(vars(income,sat,gpa,tuition,net_price),mean,na.rm=T)
+```
+
+---
+
+# The Data
+```{r}
+p <- ad %>%
+  group_by(yield) %>%
+  summarise_at(vars(income,sat,gpa,
+                    net_price),mean,na.rm=T) %>%
+  gather(var,value,-yield) %>%
+  ggplot(aes(x = factor(yield),y = value)) + 
+  geom_bar(stat = 'identity') +
+  scale_x_discrete(name = 'Yield',labels = c('No Attend','Attend')) + 
+  facet_wrap(~var,scales = 'free') + 
+  theme_ridges()
+```
+
+
+---
+
+# The Data
+
+```{r}
+p
+```
+
+---
+
+# Invert!
+
+- Could also look at average yield by characteristic
+
+```{r}
+ad %>%
+  group_by(legacy) %>%
+  summarise(pr_attend = mean(yield))
+```
+
+---
+
+# Heatmaps
+
+- Look at 3-dimensions of data
+
+--
+
+  - Done this before by tweaking `fill`, `color`, or `size`
+  
+--
+
+- `geom_tile()`: create a heatmap
+
+```{r}
+p <- ad %>%
+  mutate(sat_decile = ntile(sat,n=10)) %>%
+  group_by(sat_decile) %>%
+  mutate(sat_decileLab = round(min(sat))) %>%
+  group_by(sat_decileLab,legacy) %>%
+  summarise(pr_attend = mean(yield),.groups = 'drop') %>%
+  ggplot(aes(x = factor(legacy),y = factor(sat_decileLab),
+             fill = pr_attend)) + 
+  geom_tile() + 
+  scale_fill_gradient(limits = c(0,1)) + 
+  theme_ridges()
+```
+
+---
+
+# Heatmaps
+
+```{r}
+p
+```
+
+---
+
+# Simplest Predictions
+
+- Conditional means
+
+```{r}
+ad <- ad %>%
+  mutate(sat_quintile=ntile(sat,n=10)) %>%
+  group_by(sat_quintile,legacy) %>%
+  mutate(prob_attend = mean(yield)) %>%
+  mutate(pred_attend = ifelse(prob_attend > .5,1,0)) %>%
+  ungroup()
+```
+
+---
+
+# Simplest Predictions
+
+- Conditional means
+
+```{r}
+ad %>%
+  group_by(yield,pred_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop')
+```
+
+---
+
+# Accuracy
+
+```{r}
+ad %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = nStudents / total_attend)
+```
+
+--
+
+- Overall accuracy: `(304 + 1256) / 2150` = `r percent((304 + 1256) / 2150)`
+
+---
+
+# Regression
+
+```{r,message = F}
+ad %>%
+  ggplot(aes(x = sat,y = yield)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm') + 
+  theme_ridges()
+```
+
+---
+
+# Regression
+
+- Binary outcome variable!
+
+--
+
+  - A linear regression is not the best solution
+  
+--
+
+  - Predictions can exceed support of $Y$
+
+--
+
+- But it can still work! **linear probability model**
+
+```{r}
+mLM <- lm(yield ~ sat + net_price + legacy,ad)
+```
+
+---
+
+# Linear Regression
+
+```{r}
+require(broom)
+tidy(mLM) %>%
+  mutate_at(vars(-term),function(x) round(x,5))
+```
+
+---
+
+# Linear Regression
+
+```{r}
+mLM <- lm(yield ~ scale(sat) + scale(net_price) + legacy,ad)
+tidy(mLM)
+ad %>%
+  summarise_at(vars(sat,net_price),function(x) round(sd(x),1))
+```
+
+---
+
+# Evaluating Predictions
+
+```{r}
+ad %>%
+  mutate(preds = predict(mLM)) %>%
+  mutate(predBinary = ifelse(preds > .5,1,0)) %>%
+  select(yield,predBinary,preds)
+```
+
+---
+
+# Evaluating Predictions
+
+
+```{r}
+ad %>%
+  mutate(pred_attend = ifelse(predict(mLM) > .5,1,0)) %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = nStudents / total_attend) %>%
+  ungroup() %>%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+---
+
+# Evaluating Predictions
+
+- Overall accuracy is just the number of correct predictions (either `0` or `1`) out of all possible
+
+--
+
+  - Is 76% good?
+
+--
+
+  - What would the dumbest guess be? Everyone will attend! `r percent(mean(ad$yield))`
+
+--
+
+- Might also want to care about just `1`s
+
+--
+
+  - **Sensitivity**: Predicted attendees / actual attendees = 92.3%
+  
+--
+
+- Also might care about just `0`s
+
+--
+
+  - **Specificity**: Predicted non-attendees / actual non-attendees = 41.2%
+  
+---
+
+# Thresholds
+
+- Shifting the threshold for `0` or `1` prediction can matter
+
+--
+
+```{r}
+ad %>%
+  mutate(pred_attend = ifelse(predict(mLM) > .4,1,0)) %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = percent(nStudents / total_attend)) %>%
+  ungroup() %>%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+---
+
+# Thresholds
+
+- Shifting the threshold for `0` or `1` prediction can matter
+
+```{r}
+ad %>%
+  mutate(pred_attend = ifelse(predict(mLM) > 1,1,0)) %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = percent(nStudents / total_attend)) %>%
+  ungroup() %>%
+  mutate(accuracy = percent(sum((yield == pred_attend)*nStudents) / sum(nStudents)))
+```
+
+---
+
+# Thresholds
+
+- Let's loop it!
+
+--
+
+
+```{r}
+toplot <- NULL
+for(thresh in seq(0,1,by = .025)) {
+  toplot <- ad %>%
+  mutate(pred_attend = ifelse(predict(mLM) > thresh,1,0)) %>%
+  group_by(yield) %>%
+  mutate(total_attend = n()) %>%
+  group_by(yield,pred_attend,total_attend) %>%
+  summarise(nStudents=n(),.groups = 'drop') %>%
+  mutate(prop = nStudents / total_attend) %>%
+  ungroup() %>%
+  mutate(accuracy = sum((yield == pred_attend)*nStudents) / sum(nStudents)) %>%
+  mutate(threshold = thresh) %>%
+    bind_rows(toplot)
+}
+```
+
+---
+
+# Thresholds
+
+.small[
+```{r}
+toplot %>%
+  mutate(metric = ifelse(yield == 1 & pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 & pred_attend == 0,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  ggplot(aes(x = threshold,y = prop,color = metric)) + 
+  geom_line() + 
+  theme_ridges()
+```
+]
+
+
+---
+
+# ROC Curve
+
+- Receiver-Operator Characteristic (ROC) Curve
+
+--
+
+- Commonly used to evaluate classification methods
+
+--
+
+  - X-axis: 1-specificity
+
+  - Y-axis: sensitivity
+
+--
+
+```{r}
+p <- toplot %>%
+  mutate(metric = ifelse(yield == 1 & pred_attend == 1,'Sensitivity',
+                         ifelse(yield == 0 & pred_attend == 0,'Specificity',NA))) %>%
+  drop_na(metric) %>%
+  select(prop,metric,threshold) %>%
+  spread(metric,prop) %>%
+  ggplot(aes(x = 1-Specificity,y = Sensitivity)) + 
+  geom_line() + 
+  xlim(c(0,1)) + ylim(c(0,1)) + 
+  geom_abline(slope = 1,intercept = 0,linetype = 'dotted') + 
+  theme_ridges()
+```
+
+---
+
+# ROC Curve
+
+```{r}
+p
+```
+
+--
+
+- Better models have high levels of sensitivity **and** specificity at every threshold
+
+---
+
+# AUC Measure
+
+- Area Under the Curve (AUC)
+
+--
+
+  - A single number summarizing classification performance
+  
+--
+
+```{r,message=F}
+require(tidymodels)
+roc_auc(data = ad %>%
+  mutate(pred_attend = predict(mLM),
+         truth = factor(yield,levels = c('1','0'))) %>%
+  select(truth,pred_attend),truth,pred_attend)
+```
+
+---
+
+# Party time!
+
+- Adding more variables / trying different combinations
+
+--
+
+- **Workflow**
+
+--
+
+  1. Train models
+  
+  2. Predict models
+  
+  3. Evaluate models
+  
+---
+
+# Train models
+
+```{r}
+m1 <- lm(yield ~ sat + net_price + legacy,ad)
+m2 <- lm(yield ~ sat + net_price + legacy + income,ad)
+m3 <- lm(yield ~ sat + net_price + legacy + income + gpa,ad)
+m4 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance,ad)
+m5 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit,ad)
+m6 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit + registered + sent_scores,ad)
+```
+
+---
+
+# Predict models
+
+```{r}
+toEval <- ad %>%
+  mutate(m1Preds = predict(m1),
+         m2Preds = predict(m2),
+         m3Preds = predict(m3),
+         m4Preds = predict(m4),
+         m5Preds = predict(m5),
+         m6Preds = predict(m6),
+         truth = factor(yield,levels = c('1','0')))
+```
+
+---
+
+# Evaluate models
+
+```{r}
+rocRes <- NULL
+for(model in 1:6) {
+  rocRes <- roc_auc(toEval,truth,paste0('m',model,'Preds')) %>%
+    mutate(model = model) %>%
+    bind_rows(rocRes)
+}
+```
+
+---
+
+# Evaluate models
+
+```{r}
+rocRes %>%
+  ggplot(aes(x = .estimate,y = reorder(model,.estimate))) + 
+  geom_bar(stat = 'identity') + 
+  theme_ridges()
+```
+
+---
+
+# OVERFITTING
+
+- Cross validation to the rescue!
+
+.tiny[
+```{r}
+set.seed(123)
+bsRes <- NULL
+for(i in 1:100) {
+  # Cross validation prep
+  inds <- sample(1:nrow(ad),size = round(nrow(ad)*.8),replace = F)
+  train <- ad %>% slice(inds)
+  test <- ad %>% slice(-inds)
+
+  # Training models
+  m1 <- lm(yield ~ sat + net_price + legacy,train)
+  m2 <- lm(yield ~ sat + net_price + legacy + income,train)
+  m3 <- lm(yield ~ sat + net_price + legacy + income + gpa,train)
+  m4 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance,train)
+  m5 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit,train)
+  m6 <- lm(yield ~ sat + net_price + legacy + income + gpa + distance + visit + registered + sent_scores,train)
+
+  # Predicting models
+  toEval <- test %>%
+    mutate(m1Preds = predict(m1,newdata = test),
+           m2Preds = predict(m2,newdata = test),
+           m3Preds = predict(m3,newdata = test),
+           m4Preds = predict(m4,newdata = test),
+           m5Preds = predict(m5,newdata = test),
+           m6Preds = predict(m6,newdata = test),
+           truth = factor(yield,levels = c('1','0')))
+
+  # Evaluating models
+  rocRes <- NULL
+  for(model in 1:6) {
+    rocRes <- roc_auc(toEval,truth,paste0('m',model,'Preds')) %>%
+      mutate(model = model) %>%
+      bind_rows(rocRes)
+  }
+  bsRes <- rocRes %>%
+    mutate(bsInd = i) %>%
+    bind_rows(bsRes)
+}
+```
+]
+---
+
+# Cross Validation AUC
+
+```{r}
+bsRes %>%
+  ggplot(aes(x = .estimate,y = factor(reorder(model,.estimate)))) + 
+  geom_boxplot() + 
+  theme_ridges()
+```
+
+---
+
+# Conclusion
+
+- Classification is just a type of prediction
+
+--
+
+  - We used linear regression
+  
+--
+
+  - But there are **much** fancier algorithms out there
+  
+--
+
+- Next class:
+
+  - A *slightly* fancier algorithm: logistic regression
+  
+  - How to use the models to achieve the university's goals

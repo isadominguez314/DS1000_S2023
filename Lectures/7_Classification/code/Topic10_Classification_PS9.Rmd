@@ -1,0 +1,112 @@
+---
+title: "Problem Set 9"
+author: "Prof. Bisbee"
+institute: "Vanderbilt University"
+date: "Due Date: 2022/11/27 @ 11:59PM CST"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Getting Set Up
+
+If you haven't already, create a folder for this course, and then a subfolder called `Topic10_Classification`, and two additional subfolders within `code` and `data`.
+
+Open `RStudio` and create a new RMarkDown file (`.Rmd`) by going to `File -> New File -> R Markdown...`.
+Change the title to `"DS1000: Problem Set 9"` and the author to your full name. Save this file as `[LAST NAME]_ps9.Rmd` to your `code` folder.
+
+If you haven't already, download the `admit_data.rds` file from the course [github page](https://github.com/jbisbee1/DS1000-F2022/blob/master/Lectures/Topic10_Classification/data/admit_data.rds) and save it to your `data` folder.
+
+All of the following questions should be answered using 
+
+Require the `tidyverse` & `tidymodels` packages, and load the `admit_data.rds` data to `ad`. Finally, `set.seed(123)` once at the very beginning, to ensure consistency in results throughout the problem set.
+```{r}
+# INSERT CODE HERE
+```
+
+
+## Question 1 [4 points + 3 EC points]
+Plot the univariate visualizations for `yield`, `income`, and `sat`. Justify your choices for how you are visualizing these variables. Then plot the conditional variation between `yield` and `income`, and `yield` and `sat`. Again, justify your choices and then interpret the results. Do these variables matter for `yield`?
+
+EXTRA CREDIT (+1 point): Explain the pattern you observe in the univariate visualization of the SAT scores. What might explain this? 
+
+EXTRA CREDIT (+2 points): Look at these same conditional relationships between `yield` and `income` and `sat`, except divide the continuous measures of `income` and `sat` into deciles using the `ntile()` function, and create a single heatmap for all three variables, where the deciles of `income` and `sat` are on the axes, and the tiles are shaded by the average attendance in each cell. Which students are most likely to attend? Which are least likely to attend? Can you determine whether income or SAT scores matter more for attendance based on this plot?
+
+**HINTS**:
+
+* Univariate Description [part 1](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic5_UnivariateDescription/code/Topic5_UnivariateDescription_part1_slides.html#1) and Univariate Visualization [part 2](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic6_UnivariateVisualization/code/Topic6_UnivariateVisualization_part2_slides.html#1)
+* Conditional Variation [part 1](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic7_ConditionalVariation/code/Topic7_ConditionalVariation_part1_slides.html#1) and [part 2](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic7_ConditionalVariation/code/Topic7_ConditionalVariation_part2_slides.html#5)
+- [Heatmap example](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#69)
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 3-6 sentences here
+
+## Question 2 [4 points]
+Now start with the simplest way of predicting attendance: the conditional mean. Specifically, calculate declines for `income` and `sat` called `incomeDec` and `satDec` using the `ntile()` function. Then calculate the average attendance in each cell using `group_by()` and `mutate()`, and finally predict attendance as 1 if the average is greater than 0.5, and 0 otherwise, using an `ifelse()` function. Evaluate the performance in terms of **accuracy**, **sensitivity**, and **specificity**. Finally, define these terms and describe your results for a general audience reader who doesn't understand statistics.
+
+**HINTS**:
+
+* [Conditional means](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#72)
+* [Sensitivity & Specificity](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#90)
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 3-6 sentences here
+
+## Question 3 [4 points]
+Now predict whether students will attend using a linear regression model (using the `lm()` function) that predicts `yield` as a function of `income` and `sat` (**not** using deciles, just the continuous versions). Calculate **accuracy**, **sensitivity**, and **specificity** from this model where the threshold is again 0.5, and compare to the results from Question 3. Does this model do better?
+
+**HINTS**:
+
+* [Linear regression for classification](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#81)
+
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 3-6 sentences here
+
+## Question 4 [4 points]
+Now recalculate **sensitivity**, **specificity**, and **accuracy** using different thresholds, ranging from 0 to 1, incrementing by 0.025 (use the `seq(from,to,by)` function). Plot the relationship between these thresholds and both the sensitivity and the specificity. What is the optimal threshold to balance the trade-off between **sensitivity** and **specificity**? Then plot ROC Curve and calculate the AUC. 
+
+**HINTS**:
+
+* [Threshold loop](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#95)
+* [ROC](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#97)
+* [AUC](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part1_slides.html#103)
+
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 1-2 sentences here
+
+## Question 5 [4 points]
+Re-do questions 3 and 4 using a logistic regression. Does this perform better than a linear regression model?
+
+**HINTS**:
+
+* [Logit regression](https://www.jamesbisbee.com/DS1000-F2022/Lectures/Topic10_Classification/code/Topic10_Classification_part2_slides.html#35)
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 3-6 sentences here
+
+## Question 6  [4 extra credit points]
+
+Now redo questions 3 and 4 using a random forest via the `ranger` package. Interpret the results. Why should we not be over-excited by the AUC in this approach? What might you do to fix this issue?
+
+```{r}
+# INSERT CODE HERE
+```
+
+> - Write 3-6 sentences here

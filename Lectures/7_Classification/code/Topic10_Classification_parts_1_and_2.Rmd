@@ -1,0 +1,752 @@
+---
+title: "College Admissions, Parts 1 & 2"
+author: "Prof. Bisbee, Vanderbilt University"
+date: "2022-11-14"
+output: html_document
+---
+
+## College Admissions: From the College's View
+
+All of you have quite recently gone through the stressful process of figuring out which college to attend. You most likely selected colleges you thought might be a good fit, sent off applications, heard back from them, and then weighed your options. Those around you probably emphasized what an important decision this is for you and for your future.
+
+Colleges see this process from an entirely different point of view. A college needs students to enroll first of all in order to collect enough tuition revenues in order to keep the lights on and the faculty paid. Almost all private colleges receive most of their revenues from tuition, and public colleges receive about equal amounts of funding from tuition and state funds, with state funds based on how many students they enroll. Second, colleges want to enroll certain types of students-- colleges based their reputation based on which students enroll, with greater prestige associated with enrolling students with better demonstrated academic qualifications. The job of enrolling a class that provides enough revenue AND has certain characteristics falls to the Enrollment Management office on a campus. This office typically includes the admissions office as well as the financial aid office. 
+
+
+## The College Admissions "Funnel"
+
+The [admissions funnel](https://www.curacubby.com/blog/admissions-funnel) is a well-established metaphor for understanding the enrollment process from the college's perspective. It begins with colleges identifying prospective students: those who might be interested in enrolling. This proceeds to "interested" students, who engage with the college via registering on the college website, sending test scores, visiting campus, or requesting other information. Some portion of these interested students will then apply. Applicants are then considered, and admissions decisions are made. From this group of admitted students a certain proportion will actually enroll. Here's live data from UC Santa Cruz (go Banana Slugs!) on their [enrollment funnel](https://iraps.ucsc.edu/iraps-public-dashboards/student-demand/admissions-funnel.html).
+
+Each stage in this process involves modeling and prediction: how can we predict which prospective students will end up being interested students? How many interested students will turn into applicants? And, most importantly, how many admitted students will actually show up in the fall?
+
+Colleges aren't powerless in this process. Instead, they execute a careful strategy to intervene at each stage to get both the number and type of students they want to convert to the next stage. These are the core functions of enrollment management. Why did you receive so many emails, brochures and maybe even text messages? Some model somewhere said that the intervention could convert you from a prospect to an interest, or from an interest to an applicant.
+
+We're going to focus on the very last step: from admitted students to what's called a yield: a student who actually shows up and sits down for classes in the fall.
+
+The stakes are large: if too few students show up, then the institutions will not have enough revenues to operate. If too many show up the institution will not have capacity for all of them. On top of this, enrollment managers are also tasked with the combined goals of increasing academic prestige (usually through test scores and GPA) and increasing the socioeconomic diversity of the entering class. As we'll see, these are not easy tasks.
+
+
+## The Data
+
+We're going to be using a dataset that was constructed to resemble a typical admissions dataset. To be clear: this is not real data, but instead is based on the relationships we see in actual datasets. Using real data in this case would be a violation of privacy. 
+
+```{r, message=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(scales)
+```
+
+```{r}
+ad<-read_rds("../data/admit_data.rds")%>%ungroup()
+```
+
+Codebook for `admit_data.rds`:
+
++-----------------+-----------------------------------------------------+
+| Variable Name   | Description                                         |
++-----------------+-----------------------------------------------------+
+| ID              | Student id                                          |
++-----------------+-----------------------------------------------------+
+| income          | Family income (AGI)                                 |
++-----------------+-----------------------------------------------------+
+| sat             | SAT/ACT score (ACT scores converted to SAT scale)   |
++-----------------+-----------------------------------------------------+
+| gpa             | HS GPA, four point scale                            |
++-----------------+-----------------------------------------------------+
+| visit           | Did student visit campus?                           |
++-----------------+-----------------------------------------------------+
+| legacy          | Did student parent go to this college?              |
++-----------------+-----------------------------------------------------+
+| registered      | Did student register on the website?                |
++-----------------+-----------------------------------------------------+
+| sent_scores     | Did student send scores prior to applying?          |
++-----------------+-----------------------------------------------------+
+| distance        | Distance from student home address to campus        |
++-----------------+-----------------------------------------------------+
+| tuition         | Stated tuition: \$45,000                            |
++-----------------+-----------------------------------------------------+
+| need_aid        | Need-based aid offered                              |
++-----------------+-----------------------------------------------------+
+| merit_aid       | Merit-based aid offered                             |
++-----------------+-----------------------------------------------------+
+| net_price       | Net Price: Tuition less aid received                |
++-----------------+-----------------------------------------------------+
+| yield           | Student enrolled in classes in fall after admission |
++-----------------+-----------------------------------------------------+
+
+### The Basics
+
+```{r}
+## How many admitted students enroll?
+ad%>%summarize(`Yield Rate`=percent(mean(yield)))
+
+## Just for enrolled students
+ad%>%filter(yield==1)%>%summarize(
+               `Average  SAT Score`=number(mean(sat),accuracy=1,big.mark=""),
+               `Average GPA`=number(mean(gpa),accuracy = 1.11),
+               `Tuition`=dollar(mean(tuition)),
+               `Average Net Price`=dollar(mean(net_price),accuracy = 1 ),
+               `Total Tuition Revenues`=dollar(sum(net_price)),
+               `Total 1st Year Enrollment`=comma(n(),big.mark=",")) 
+```
+
+So, a few things stand out right away, all of which are pretty common among private colleges. First, this is a moderately selective institution, with an average GPA of 3.33 (unweighted) and an average SAT of about 1200 (about a 25 on the ACT). The average net price is MUCH less than tuition, indicating that the campus is discounting heavily. Total revenues from tuition are about 30 million.
+
+## The Case
+
+We've been hired as the data science team for a liberal arts college [this is a real thing](https://www.fire-engine-red.com/financial-aid-and-student-success/).
+
+The college president and the board of trustees have two strategic goals:
+
+1.  Increase the average SAT score to 1300
+2.  Admit at least 200 more students with incomes less than \$50,000
+
+Here's the rub: they want to do this without allowing tuition revenues to drop below \$30 million and without changing the size of the entering class, which should be about 1,500 students (plus or minus 50, nobody minds sleeping in the study lounge, right?).
+
+What we need to do is to figure out which students are most and least likely to enroll. We can then target our financial aid strategy to improve yield rates among certain groups.
+
+This is a well-known problem known as [price discrimination](http://sites.bu.edu/manove-ec101/files/2017/11/VarianHalPriceDiscrimination1989.pdf), which is applied in many industries, including airlines, hotels, and software. The idea is to charge the customers who are most willing/able to pay the most, while charging the customers who are least willing/able to pay the least.
+
+To solve our problem we need to do the following:
+
+1. Come up with a prediction algorithm that accurately establishes the relationship between student characteristics and the probability of attendance
+2. Adjust policies in order to target those students who we want to attend, thereby increasing their probability of attendance. 
+
+
+## Current Institutional Policies
+
+Essentially every private college engages heavily in tuition discounting. This has two basic forms: need-based aid and merit-based aid. Need-based aid is provided on the basis of income, typically with some kind of income cap. Merit-based aid is based on demonstrated academic qualifications, again usually with some kind of minimum. Here's this institution's current policies. 
+
+The institution is currently awarding need-based aid for families making less than \$100,0000 on the following formula:
+
+$need_aid=500+(income/1000-100)\*-425$
+
+Translated, this means for every \$1,000 the family makes less than \$100,000 the student receives an additional 425 dollars. So for a family making \$50,000, need-based aid will be $500+(50,000/1000-100)*-425= 500+ (-50*-425)$=\$21,750. Need based aid is capped at total tuition.
+
+```{r}
+ad%>%
+  ggplot(aes(x=income,y=need_aid))+
+  geom_point()
+```
+
+The institution is currently awarding merit-based aid for students with SAT scores above 1250 on the following formula:
+
+$merit_aid=5000+(sat/100\*1500)$
+
+Translated, this means that for every 10 points in SAT scores above 1250, the student will receive an additional \$1,500. So for a student with 1400 SAT, merit based aid will be : $5000+ (1400/10 *250)= 500+140*250$
+
+```{r}
+ad%>%
+  ggplot(aes(x=sat,y=merit_aid))+
+  geom_point()
+```
+
+As with need-based aid, merit-based aid is capped by total tuition. 
+
+## Classification
+
+Our core prediction problem is [classification](https://towardsdatascience.com/machine-learning-classifiers-a5cc4e1b0623). There are two groups of individuals that constitute our outcome: those who attended and those who did not. In data science, predicting group membership is known as a classification problem. It occurs whenever the outcome is a set of discrete groupings. We'll be working with the simplest type of classification problem, which has just two groups, but these problems can have multiple groups-- essentially categorical variables.
+
+
+
+## Probability of Attendance
+
+Remember: the mean of a binary variable is the same thing as the proportion of the sample with that characteristic. So, the mean of `yield` is the same thing as the proportion of admitted students who attend, or the probability of attendance.
+
+```{r}
+ad%>%summarize(pr_attend=mean(yield))
+```
+
+## Conditional Means
+
+Let's go back to our first algorithm for prediction: conditional means. Let's start with the variable `legacy` which indicates whether or not the student has a parent who attended the same institution:
+
+```{r}
+ad%>%
+  group_by(legacy)%>%
+  summarize(pr_attend=mean(yield))
+```
+
+That's a big difference! Legacy students are abut 17 percentage points more likely to yield than non-legacies.
+
+Next, let's look at SAT scores. This is a continuouos variable, so we need to first break it up into a smaller number of groups. Let's look at yield rates by quintile of SAT scores among admitted students:
+
+```{r}
+ad%>%
+  mutate(sat_quintile=ntile(sat,n=5))%>%
+  group_by(sat_quintile)%>%
+  summarize(min_sat=min(sat),
+  pr_attend=mean(yield))
+```
+
+So, it looks like yield steadily increases with SAT scores-- a good sign for the institution as it seeks to increase SAT scores.
+
+*Quick Exercise* calculate yield by quintiles of net price: what do you see?
+
+```{r}
+ad%>%
+  mutate(net_price_quintie=ntile(net_price,n=5))%>%
+  group_by(net_price_quintie)%>%
+  summarize(amount=min(net_price),
+            pr_attend=mean(yield))
+
+```
+
+## Combining Conditional Means
+
+Let's look at yield rates by both sat quintile and legacy status.
+
+```{r}
+ad%>%
+  mutate(sat_decile=ntile(sat,n=10))%>%
+  group_by(sat_decile,legacy)%>%
+  summarize(min_sat=min(sat),
+  pr_attend=mean(yield))%>%
+  ggplot(aes(y=as_factor(sat_decile),x=as_factor(legacy),fill=pr_attend))+
+  geom_tile()+
+  scale_fill_viridis_c()+
+  ylab("SAT Score Decile")+xlab("Legacy Status")
+```
+
+## Predictions based on conditional means
+
+We can use this simple method to make predictions. 
+
+```{r}
+ad<-ad%>%
+  mutate(sat_quintile=ntile(sat,n=10))%>%
+  group_by(sat_quintile,legacy)%>%
+  mutate(prob_attend=mean(yield))%>%
+  mutate(pred_attend=ifelse(prob_attend>=.5,1,0))
+```
+
+Let's compare this predicted with the actual:
+
+```{r}
+ad%>%
+  group_by(yield,pred_attend)%>%
+  summarize(n())%>%
+  rename(`Actually Attended`=yield,
+         `Predicted to Attend`=pred_attend,
+         `Number of Students`=`n()`)
+```
+
+## Acccuracy of Conditional Means
+```{r}
+ad%>%
+  group_by(yield)%>%
+  mutate(total_attend=n())%>%
+  group_by(yield,pred_attend)%>%
+  summarize(n(),`Actual Group`=mean(total_attend))%>%
+  mutate(Proportion=`n()`/`Actual Group`)%>%
+  rename(`Actually Attended`=yield,
+         `Predicted to Attend`=pred_attend,
+         `Number of Students`=`n()`)
+```
+
+Here's how to read this: There were 312 students that our algorithm said would not attend who didn't attend. This means out of the 674 students who were admitted but did not attend, our algorithm correctly classified 46 percent. There were 362 students who our model said would not attend who actually showed up. 
+
+On the other side, There were 225 students who our model said would not show up, who actually attended. And last, there were  1251 students who our model said would attend who actually did-- we correctly classified 85 percent of actual attendees. The overall accuracy of our model ends up being (312+1251)/2150 or 72 percent. 
+
+*Question: is this a good model?*
+
+## Prediction via Linear Regression: Wrong, but Useful!
+
+We can use our standard tool of linear regression to build an model and make predictions, with just a few adjustments. This will be wrong, but useful.
+
+We'll begin as we always do by splitting the data into training and testing datasets.
+
+```{r}
+ad_split<-initial_split(ad)
+
+ad_train<-training(ad_split)
+
+ad_test<-testing(ad_split)
+```
+
+
+We'll use the wrong model, a linear regression. Running a linear regression with a binary dependent variable is called a linear probability model, which ironically it is not. 
+```{r}
+lm_mod<-linear_reg()%>%
+        set_engine("lm")%>%
+        set_mode("regression") ## WRONG
+```
+
+
+We'll use a formula that includes the variables we've used so far,and add that to the recipe.
+```{r}
+admit_formula<-as.formula("yield~sat+net_price+legacy")
+
+admit_recipe<-recipe(admit_formula,ad_train)
+```
+
+Our workflow will combine the model and recipe:
+```{r}
+ad_wf<-workflow()%>%
+  add_model(lm_mod)%>%
+  add_recipe(admit_recipe)
+```
+
+And now we can fit the model to the training data:
+```{r}
+ad_wf<-ad_wf%>%
+  fit(ad_train)
+```
+
+
+And take a a look at the results:
+```{r}
+ad_wf%>%tidy()
+```
+
+*Question: What do we make of these coefficients*
+
+
+Now we can make predictions based on this model in the testing data.
+```{r}
+ad_test<-ad_wf%>%
+  predict(ad_test)%>%
+  bind_cols(ad_test)
+```
+
+
+Let's take a look at these predictions
+```{r}
+ad_test%>%select(yield,.pred)
+```
+
+So these are probabilities. To complete the classification problem, we need to assign group labels to each case in the testing dataset. Let's assume that a probability equal to or greater than .5 will be classified as a 1 and everything else as a 0.
+
+```{r}
+ad_test<-ad_test%>%
+  mutate(pred_attend=ifelse(.pred>=.5,1,0))
+
+ad_test%>%select(yield,.pred,pred_attend)
+```
+
+
+Here's the problem with using a linear regression in this case: there's no guarantee that the results will be on the probability scale. So, we can find cases where our model predicted probabilities below 0 or above 1. Of course, these just get labeled as 1 or 0. 
+```{r}
+ad_test%>%
+  filter(.pred>1|.pred<0)%>%
+  select(yield,.pred,pred_attend)
+```
+
+## Accuracy of Linear Regression
+
+
+```{r}
+ad_test%>%
+  group_by(yield)%>%
+  mutate(total_attend=n())%>%
+  group_by(yield,pred_attend)%>%
+  summarize(n(),`Actual Group`=mean(total_attend))%>%
+  mutate(Proportion=`n()`/`Actual Group`)%>%
+  rename(`Actually Attended`=yield,
+         `Predicted to Attend`=pred_attend,
+         `Number of Students`=`n()`)
+```
+
+
+
+In this model, we correctly classified 80 out of 169 non-attendees or about 47 percent, and 310 out of 369 attendees or about 85 percent. The overall accuracy is 390/538 or 72 percent. How are we doing? 
+
+
+### Sensitivity
+In the above table, the percent of 1s correctly identified is a measure known as sensitivity:
+
+```{r}
+ad_test%>%
+  sensitivity(truth=as.factor(yield),
+              estimate=as.factor(pred_attend),
+              event_level="second")
+```
+
+
+### Specificity
+
+The percent of 0s correctly identified is a measure know as specificity
+
+```{r}
+ad_test%>%
+  spec(truth=as.factor(yield),
+       estimate=as.factor(pred_attend),
+       event_level="second")
+```
+
+### Accuracy
+```{r}
+ad_test%>%
+  accuracy(truth=as.factor(yield),
+              estimate=as.factor(pred_attend),
+              event_level="second")
+```
+
+
+## Logistic Regression
+
+So far, we've been using tools we know for classification. While we *can* use
+conditional means or linear regression for classification, it's better to use a
+tool that was created specifically for binary outcomes.
+
+Logistic regression is set up to handle binary outcomes as the dependent
+variable. The downside to logistic regression is that it is modeling the log
+odds of the outcome, which means all of the coefficients are expressed as log
+odds, which (almost) no one understands intuitively.
+
+Let's take a look at a simple plot of our dependent variable as a function of
+one independent variable: SAT scores. I'm using `geom_jitter` to allow the points
+to "bounce" around a bit on the y axis so we can actually see them, but it's
+important to note that they can only be 0s or 1s.
+
+## Yield as a Function of SAT Scores
+
+```{r}
+ad%>%
+  ggplot(aes(x=sat,y=yield))+
+  geom_jitter(width=.01,height=.05,alpha=.25,color="blue")
+```
+
+We can see there are more higher SAT students than lower SAT students that ended
+up enrolling. A linear model in this case would look like this:
+
+## Predicted "Probabilities" from a Linear Model
+
+```{r}
+ad%>%
+  ggplot(aes(x=sat,y=yield))+
+  geom_jitter(width=.01,height=.05,alpha=.25,color="blue")+
+  geom_smooth(method="lm",se = FALSE,color="black")
+```
+
+We can see the issue we identified last time: we CAN fit a model, but it doesn't
+make a ton of sense. In particular, it doesn't follow the data very well and it
+ends up with probabilities outside 0,1.
+
+## Generalized Linear Models
+
+What we need is a better function that connects $y$ to $x$. The idea of
+connecting $y$ to $x$ with a function other than a simple line is called a
+generalized linear model.
+
+A \textit{Generalized Linear Model} posits that the probability that $y$ is
+equal to some value is a function of the independent variables and the
+coefficients or other parameters via a *link function*:
+
+$P(y|\mathbf{x})=G(\beta_0 + \mathbf{x_i\beta})$
+
+In our case, we're interested in the probability that $y=1$
+
+$P(y=1|\mathbf{x})=G(\beta_0 + \mathbf{x_i\beta})$
+
+There are several functions that "map" onto a 0,1 continuum. The most commonly
+used is the logistic function, which gives us the *logit model*.
+
+The logistic function is given by:
+
+$f(x)=\frac{1}{1+exp^{-k(x-x_0)}}$
+
+## The Logistic Function: Pr(Y) as a Function of X
+
+```{r}
+x<-runif(100,-3,3)
+pr_y=1/(1+exp(-x))
+as_tibble(pr_y,x)%>%
+  ggplot(aes(x=x,y=pr_y))+
+  geom_smooth()
+```
+
+Mapped onto our GLM, this gives us:
+
+$P(y=1|\mathbf{x})=\frac{exp(\beta_0 + \mathbf{x_i\beta})}{1+exp(\beta_0 +\mathbf{x_i\beta})}$
+
+The critical thing to note about the above is that the link function maps the
+entire result of estimation $(\beta_0 + \mathbf{x_i\beta})$ onto the 0,1
+continuum. Thus, the change in the $P(y=1|\mathbf{x})$ is a function of *all* of
+the independent variables and coefficients together, \textit{not} one at a time.
+
+What does this mean? It means that the coefficients can only be interpreted on
+the *logit* scale, and don't have the normal interpretation we would use for OLS
+regression. Instead, to understand what the logistic regression coefficients
+mean, you're going to have to convert the entire term
+$(\beta_0 + \mathbf{x_i\beta})$ to the probability scale, using the inverse of
+the function. Luckily we have computers to do this for us . . .
+
+If we use this link function on our data, it would look like this:
+
+## Plotting Predictions from Logistic Regression
+
+```{r}
+glm(yield ~ sat, family = binomial(link = "logit"), data = ad) %>% ## Run a glm
+  augment(type.predict = "response") %>% ## generate predictions on the prob scale
+  ggplot(aes(x = sat, y = yield)) + 
+  geom_jitter(
+    width = .01,
+    height = .05,
+    alpha = .25,
+    color = "blue"
+  ) +
+  geom_smooth(method = "lm", se = FALSE, color = "black")+
+  geom_smooth(aes(x=sat,y=.fitted,color="red"))+ ## Show pred probs
+  theme(legend.position = "none")+
+  ggtitle("Linear Prediction  in Black, Logistic in Red")
+```
+
+*Quick Exercise: Replicate the above model using distance as a predictor and
+comment on what it tells you*
+
+
+```{r}
+glm(yield ~ distance, family = binomial(link = "logit"), data = ad) %>% ## Run a glm
+  augment(type.predict = "response") %>% ## generate predictions on the prob scale
+  ggplot(aes(x = distance, y = yield)) + 
+  geom_jitter(
+    width = .01,
+    height = .05,
+    alpha = .25,
+    color = "blue"
+  ) +
+  geom_smooth(method = "lm", se = FALSE, color = "black")+
+  geom_smooth(aes(x=distance,y=.fitted,color="red"))+ ## Show pred probs
+  theme(legend.position = "none")+
+  ggtitle("Linear Prediction  in Black, Logistic in Red")
+```
+
+
+As you're getting started, this is what we recommend with these models:
+
+-   Use coefficient estimates for sign and significance only--don't try and come
+    up with a substantive interpretation.
+-   Generate probability estimates based on characteristics for substantive
+    interpretations.
+
+## Using Tidymodels for Classification
+
+For us to run a logistic regression in the tidymodels framework, the dependent
+variable has to be a factor, so we need to do some . . .
+
+## Data Wrangling
+
+```{r}
+ad<-ad%>%
+  mutate(yield_f=as_factor(ifelse(yield==1,"Yes","No")))%>%
+  mutate(yield_f=fct_relevel(yield_f,ref="No"))
+```
+
+The code above converts the binary variable of yield to a factor variable `yield_f`, with "Yes" as the outcome and "No" as the reference (or excluded) category. 
+
+As usual, we're going to use the "tidymodels" approach to running this model,
+which works much better for a standard data science workflow. It begins with
+splitting the data into testing and training datasets using the `initial_split`
+function.
+
+## Training and Testing
+
+```{r}
+split_data<-initial_split(ad)
+ad_train<-training(split_data)
+ad_test<-testing(split_data)
+```
+
+## Settting the Model
+
+Now, instead of `linear_reg` we need to specify `logistic_reg` as our
+regression. The engine will be `glm` for generalized linear model and we'll go
+ahead and specify that we want to do classification: predicting group
+membership.
+
+```{r}
+logit_mod<-logistic_reg()%>%
+  set_engine("glm")%>%
+  set_mode("classification")
+```
+
+## Formula and Recipe
+
+The formula for a logit model looks just like the formula for a linear model.
+We'll add that formula to the recipe in the standard way.
+
+```{r}
+admit_formula<-as.formula("yield_f~sat+net_price+legacy+visit")
+admit_recipe<-recipe(admit_formula,ad_train)
+```
+
+## Workflow
+
+Now we can add our model and our recipe to a workflow.
+
+```{r}
+ad_wf<-workflow()%>%
+  add_model(logit_mod)%>%
+  add_recipe(admit_recipe)
+```
+
+## Train Model
+
+And we're ready to fit the model and add the results to our workflow. 
+
+```{r}
+ad_wf<-ad_wf%>%
+  fit(ad_train)
+```
+
+
+We can print out the coefficients using `tidy`
+```{r}
+ad_wf%>%tidy()
+```
+
+What this is telling us is that controlling for net price, SAT scores have a negative relationship with yield, that net price also has a negative relationship with yield, and that controlling for SAT and net price, legacy has a negative relationship with yield. 
+
+*Quick Exercise: add a campus visit to the model and see what the results tell you.*
+
+
+
+## Understanding Model fit for Classification
+
+We previously explored the concepts of accuracy, sensitivity and specificity. 
+
+- Accuracy represents the proportion of cases correctly classified. 
+- Sensitivity represents the proportion of "1s" or  positive outcomes correctly classified
+- Specificity represents the proportion of "0s" or negative outcomes correctly classified
+
+All of these are dependent on our choice of threshold: at what probability do we say that something should be classified as a 1 or a 0? We many times use .5 as a "default" threshold, but there's nothing mathematically proven  that says that .5 is a correct threshold. 
+
+## Accuracy
+
+Remember that accuracy must always be evaluated relative to the baseline rate. Let's check our baseline:
+
+```{r}
+ad_test%>%summarize(mean(yield))
+```
+
+So, by simply guessing "Yes" for everyone, we could get a an accuracy of .7 or so. Let's check and see how our model is doing:
+
+```{r}
+ad_wf%>%
+  predict(ad_test)%>%
+  bind_cols(ad_test)%>%
+  accuracy(truth=yield_f,estimate=.pred_class,event_level="second")
+```
+
+Okay, so baseline is about .7 while our model has an overall accuracy of .78: better!
+
+
+## Sensitivity
+
+Sensitivity is the proportion of positive outcomes correctly predicted. For us it's the proportion of enrolled students correctly predicted.
+
+```{r}
+ad_wf%>%
+  predict(ad_test)%>%
+  bind_cols(ad_test)%>%
+ sens(truth=yield_f,estimate=.pred_class,event_level="second")
+```
+
+So, out of all of the enrolled students, our model correctly predicted 93 percent.
+
+*Question: What would happen to our sensitivity if we moved the threshold closer to 1?*
+
+## Specificity
+
+Specificity is the probability of correctly classifying negative responses, in our case the probability that the model correctly classifies those who do NOT enroll. 
+
+```{r}
+ad_wf%>%
+  predict(ad_test)%>%
+  bind_cols(ad_test)%>%
+ spec(truth=yield_f,estimate=.pred_class,event_level="second")
+```
+
+This means that our model only correctly classified 42 percent of those who did not enroll. 
+
+*Question: What would happen to our specificity if we moved the threshold closer to 1?*
+
+At this point, our overall judgment on the predictions from this model is that it's pretty good at classifying those who enroll, and not so good at classifying those who do not enroll. It's overall more accurate than the baseline, but we could probably do better.
+
+
+## Varying Thresholds
+
+As mentioned before, the calculated sensitivity and specificity depend on the threshold we use. We can vary this threshold to get a sense of what difference it might make. Below. I use the `threshold_perf` command to vary the threshold from 0 to 1, calculating both sensitivity and specificity at each threshold. 
+
+```{r}
+library(probably)
+options(yardstick.event_first = FALSE)
+threshold_example<-ad_wf%>%
+  predict(ad_test,type="prob")%>%
+  bind_cols(ad_test)%>%
+   threshold_perf(truth=yield_f,
+                 estimate=.pred_Yes,
+               thresholds=seq(0,1,by=.1),
+               metrics=c("sens","spec"))
+ggplot(filter(threshold_example,.metric%in%c("sens","spec")),
+       aes(x=.threshold,y=.estimate,color=.metric))+
+  geom_line()
+```
+
+What this shows is that the specificity increases fairly steadily with higher thresholds, while the sensitivity decreases rapidly with higher thresholds above .5. A threshold of about .7 would likely give the best balance between specificity and sensitivity. 
+
+## Receiver-Operator Characteristic (ROC) Curve
+
+The Receiver-Operator Characteristic (ROC) curve shows the combination of sensitivity and specificity at a large number (typically 100) different thresholds. It's plotted with the sensitivity on the y axis and 1-specificity on the x axis. The idea is that a model that is very predictive will have high levels  of sensitivity AND high levels of specificity at EVERY threshold. Such a model will cover most of the available area above the baseline of .5. A model with low levels of sensitivity and low levels of specificity at every threshold will cover almost none of the available area above the baseline of .5. Here's a drawing of the ROC curve for our predictions:  
+
+```{r}
+ad_wf%>%
+  predict(ad_test,type="prob")%>%
+  bind_cols(ad_test)%>%
+  roc_curve(truth=yield_f,.estimate=.pred_Yes,event_level="second")%>%
+  autoplot()
+```
+
+And here's the proportion of the area in the graph (AUC) covered by the curve drawn above:
+
+```{r}
+ad_wf%>%
+  predict(ad_test,type="prob")%>%
+  bind_cols(ad_test)%>%
+  roc_auc(truth=yield_f,estimate=.pred_Yes,event_level="second")
+```
+
+The nice thing is that interpreting AUC is just like interpreting academic grades:
+
+Below .6= bad (F)
+
+.6-.7= still not great (D)
+
+.7-.8= Ok . .. (C)
+
+.8-.9= Pretty good (B)
+
+.9-1= Very good fit (A)
+
+*Quick Exercise: Rerun the model with sent_scores added: does it improve model fit?*
+
+
+```{r}
+admit_formula<-as.formula("yield_f~sat+net_price+legacy+visit+sent_scores")
+admit_recipe<-recipe(admit_formula,ad_train)
+```
+
+
+```{r}
+ad_wf<-workflow()%>%
+  add_model(logit_mod)%>%
+  add_recipe(admit_recipe)
+```
+
+## Train Model
+
+And we're ready to fit the model and add the results to our workflow. 
+
+```{r}
+ad_wf<-ad_wf%>%
+  fit(ad_train)
+```
+
+
+```{r}
+ad_wf%>%
+  predict(ad_test,type="prob")%>%
+  bind_cols(ad_test)%>%
+  roc_auc(truth=yield_f,estimate=.pred_Yes,event_level="second")
+```
+
