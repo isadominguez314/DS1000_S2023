@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ]
 .date[
 ### Lecture Date: 2023/01/23
-Slides Updated: 2023-01-03
+Slides Updated: 2023-01-04
 ]
 
 ---
@@ -201,7 +201,7 @@ df %&gt;%
 
 ---
 
-# Previously: `summarise()` + `filter()`
+#`summarise()` + `filter()`
 
 --
 
@@ -237,8 +237,9 @@ df %&gt;%
 ## 1         1424.
 ```
 
+---
 
-# Previously: `summarise()` + `group_by()`
+# `summarise()` + `group_by()`
 
 --
 
@@ -574,6 +575,215 @@ df %&gt;%
 
 ---
 
+# Categorical Data
+
+- Thus far, we have used two continuous variables: `adm_rate` and `sat_avg`
+
+--
+  
+  - We used `geom_point()` to display the data as a scatterplot
+  
+--
+
+- What if we wanted to determine which state is home to the most selective schools?
+
+--
+
+- Use `group_by()` and `summarise()`
+  
+--
+
+
+```r
+df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T))
+```
+
+```
+## # A tibble: 51 × 2
+##    stabbr selective_avg
+##    &lt;chr&gt;          &lt;dbl&gt;
+##  1 AK             0.827
+##  2 AL             0.654
+##  3 AR             0.676
+##  4 AZ             0.843
+##  5 CA             0.592
+##  6 CO             0.768
+##  7 CT             0.589
+##  8 DC             0.529
+##  9 DE             0.627
+## 10 FL             0.620
+## # … with 41 more rows
+```
+
+---
+
+# Categorical Data
+
+- This gives us two variables again, but one of them is now a `character` type
+
+--
+
+- Can we plot this as a scatterplot?
+
+--
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_point()
+```
+
+---
+
+# Categorical Data
+
+- Yes...but it isn't very pretty
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data
+
+- Let's try a barplot instead using `geom_bar()`
+
+--
+
+  - NB: `geom_bar()` will automatically try to count the values on the x-axis
+  
+--
+
+
+```r
+df %&gt;%
+  ggplot(aes(x = stabbr)) + 
+  geom_bar()
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data
+
+- This is fine if we just want to know which states have the most schools in our data
+
+--
+
+- But we want to put the average admissions rate on the y-axis instead
+
+--
+
+  - Need to **override** `geom_bar()` default behavior
+  
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+* geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Categorical Data
+
+- Getting a little better, but still ugly
+
+--
+
+- Use `reorder()` to sort the x-axis values by the y-axis
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+* ggplot(aes(x = reorder(stabbr,selective_avg),y = selective_avg)) +
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+- Even better!
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-32-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Plot Tweaking
+
+- We could go even further and swap the x and y-axes (although this isn't always a good idea!)
+
+
+```r
+p &lt;- df %&gt;%
+  group_by(stabbr) %&gt;%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %&gt;%
+* ggplot(aes(y = reorder(stabbr,selective_avg),x = selective_avg)) +
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Plot Tweaking
+
+
+```r
+p
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-34-1.png" style="display: block; margin: auto;" /&gt;
+
+--
+
+- Still ugly though! We want to tweak the labels with `labs()`
+
+---
+
+# Plot Tweaking
+
+
+```r
+p + 
+  labs(title = "Average Admissions by State",
+       x = "Admissions Rate",
+       y = "State")
+```
+
+&lt;img src="Intro_to_R_Part3_slides_files/figure-html/unnamed-chunk-35-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
 # Conclusion
 
 --
@@ -616,7 +826,7 @@ df %&gt;%
 
 --
   
-  1. Work through Lecture_2023_01_23_hw.Rmd
+  1. Work through Intro_to_R_Part3_hw.Rmd
   
   2. Complete Problem Set 1
     </textarea>

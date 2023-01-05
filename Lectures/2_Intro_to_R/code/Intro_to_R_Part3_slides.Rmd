@@ -181,7 +181,7 @@ df %>%
 
 ---
 
-# Previously: `summarise()` + `filter()`
+#`summarise()` + `filter()`
 
 --
 
@@ -201,8 +201,9 @@ df %>%
   summarise(mean_sat_1020 = mean(sat_avg,na.rm=T))
 ```
 
+---
 
-# Previously: `summarise()` + `group_by()`
+# `summarise()` + `group_by()`
 
 --
 
@@ -532,6 +533,175 @@ df %>%
 
 ---
 
+# Categorical Data
+
+- Thus far, we have used two continuous variables: `adm_rate` and `sat_avg`
+
+--
+  
+  - We used `geom_point()` to display the data as a scatterplot
+  
+--
+
+- What if we wanted to determine which state is home to the most selective schools?
+
+--
+
+- Use `group_by()` and `summarise()`
+  
+--
+
+```{r}
+df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T))
+```
+
+---
+
+# Categorical Data
+
+- This gives us two variables again, but one of them is now a `character` type
+
+--
+
+- Can we plot this as a scatterplot?
+
+--
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_point()
+```
+
+---
+
+# Categorical Data
+
+- Yes...but it isn't very pretty
+
+```{r}
+p
+```
+
+---
+
+# Categorical Data
+
+- Let's try a barplot instead using `geom_bar()`
+
+--
+
+  - NB: `geom_bar()` will automatically try to count the values on the x-axis
+  
+--
+
+```{r}
+df %>%
+  ggplot(aes(x = stabbr)) + 
+  geom_bar()
+```
+
+---
+
+# Categorical Data
+
+- This is fine if we just want to know which states have the most schools in our data
+
+--
+
+- But we want to put the average admissions rate on the y-axis instead
+
+--
+
+  - Need to **override** `geom_bar()` default behavior
+  
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = stabbr,y = selective_avg)) + 
+  geom_bar(stat = 'identity') #<<
+```
+
+---
+
+# Categorical Data
+
+```{r}
+p
+```
+
+---
+
+# Categorical Data
+
+- Getting a little better, but still ugly
+
+--
+
+- Use `reorder()` to sort the x-axis values by the y-axis
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(x = reorder(stabbr,selective_avg),y = selective_avg)) + #<<
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Categorical Data
+
+- Even better!
+
+```{r}
+p
+```
+
+---
+
+# Plot Tweaking
+
+- We could go even further and swap the x and y-axes (although this isn't always a good idea!)
+
+```{r}
+p <- df %>%
+  group_by(stabbr) %>%
+  summarise(selective_avg = mean(adm_rate,na.rm=T)) %>%
+  ggplot(aes(y = reorder(stabbr,selective_avg),x = selective_avg)) + #<<
+  geom_bar(stat = 'identity')
+```
+
+---
+
+# Plot Tweaking
+
+```{r}
+p
+```
+
+--
+
+- Still ugly though! We want to tweak the labels with `labs()`
+
+---
+
+# Plot Tweaking
+
+```{r}
+p + 
+  labs(title = "Average Admissions by State",
+       x = "Admissions Rate",
+       y = "State")
+```
+
+---
+
 # Conclusion
 
 --
@@ -574,6 +744,6 @@ df %>%
 
 --
   
-  1. Work through Lecture_2023_01_23_hw.Rmd
+  1. Work through Intro_to_R_Part3_hw.Rmd
   
   2. Complete Problem Set 1
