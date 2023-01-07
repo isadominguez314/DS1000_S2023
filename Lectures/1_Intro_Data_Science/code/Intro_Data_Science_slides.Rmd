@@ -943,7 +943,13 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 # .red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Goal/Problem/Challenge**: Measure the ideology of a YouTube
+
+---
+
+# .red[Prediction] Camp
+
+- **Data Wrangling**: Get matrix of links shared on political subreddits
 
 --
 
@@ -953,7 +959,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of links shared on political subreddits
 
 <center><img src="figs/hard_data_2.png" width="100%"></center>
 
@@ -961,7 +967,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of links shared on political subreddits
 
 <center><img src="figs/hard_data_3.png" width="100%"></center>
 
@@ -969,7 +975,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of links shared on political subreddits
 
 <center><img src="figs/hard_data_4.png" width="100%"></center>
 
@@ -977,7 +983,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Correspondence Analysis to estimate ideology scores for subreddits
 
 <center><img src="figs/hard_data_5.png" width="100%"></center>
 
@@ -985,7 +991,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
 
 <center><img src="figs/hard_data_6.png" width="100%"></center>
 
@@ -993,7 +999,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
 
 <center><img src="figs/hard_data_7.png" width="100%"></center>
 
@@ -1001,7 +1007,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of YouTube videos shared on scored subreddits
 
 <center><img src="figs/hard_data_8.png" width="100%"></center>
 
@@ -1009,7 +1015,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Get matrix of 60k YouTube videos shared on scored subreddits
 
 <center><img src="figs/hard_data_9.png" width="100%"></center>
 
@@ -1017,7 +1023,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Data Wrangling**: Calculate video ideology as weighted mean of subreddits
 
 <center><img src="figs/hard_data_10.png" width="100%"></center>
 
@@ -1025,7 +1031,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Model Training**: BERT transformer trained on 60k videos
 
 <center><img src="figs/hard_data_12.png" width="100%"></center>
 
@@ -1033,7 +1039,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 #.red[Prediction] Camp
 
-- **Goal**: Measure the ideology of a YouTube
+- **Prediction**: Measure the ideology of a YouTube video
 
 <center><img src="figs/hard_data_13.png" width="100%"></center>
 
@@ -1182,12 +1188,6 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <center><img src="figs/grades_semester.png" width="100%"></center>
 
-
----
-
-# Previous Semester
-
-<center><img src="figs/cheating.png" width="100%"></center>
 
 ---
 
