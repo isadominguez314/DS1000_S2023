@@ -27,9 +27,7 @@ This is the course management software used at Vanderbilt to support course lear
 Don’t forget to download the related app, which is called Pulse, to your phone and set it to alert you if there are new content or announcements for the course.
 
 ### Campuswire
-I have set up a Campuswire workspace for our use this semester to help us better communicate with each other and the TAs. You will need to create an account and join our workspace by following [this link](https://campuswire.com/p/G175ABCF3).
-
-You are encouraged to post questions within your TA channel (formatted as **#[TA Last name]**), as well as to adopt these [Slack etiquette tips](https://slack.com/blog/collaboration/etiquette-tips-in-slack). Your TA is defined on your Brightspace page under the "Groups". I will also email each group ahead of the first class to introduce you. 
+I have set up a Campuswire workspace for our use this semester to help us better communicate with each other and the TAs. You will need to create an account and join our workspace by following [this link](https://campuswire.com/c/GE61F4A99). You are encouraged to adopt these [Slack etiquette tips](https://slack.com/blog/collaboration/etiquette-tips-in-slack). 
 
 Here is the list of channels you should see upon joining the Campuswire workspace:
 
@@ -60,9 +58,10 @@ You are encouraged to adopt the following workflow for this class:
 
 ## Evaluation & Responsibilities
 
-Given the nature of the material, as well as the size of the class, participation is not part of your grade. Instead, you will be assigned weekly problem sets beginning with Topic 3 which will test your ability to apply what you've learned in class, and to think creatively about your own data science ideas. These problem sets are assigned on the Monday of each week and are due by **11:59PM Nashville time the following Friday**. You are welcome to collaborate on these problem sets, and are encouraged to ask questions on your **#ta-[TA Last Name]** channel on `Campuswire`.
+Given the nature of the material, as well as the size of the class, participation is not part of your grade. Instead, you will be assigned weekly problem sets beginning with Topic 3 which will test your ability to apply what you've learned in class, and to think creatively about your own data science ideas. These problem sets are assigned on the Monday of each week and are due by **11:59PM Nashville time the following Friday**. You are welcome to collaborate on these problem sets, and are encouraged to ask questions on the **Class feed** on `Campuswire`.
 
-There are also two exams. The first is a mid-term exam that is scheduled for October 12th (Wednesday) and will take place in class. The preceding Monday (October 10th) will be an optional review session, where you should come prepared with questions. The second exam is a cumulative final that is scheduled for December 12th. 
+There are also two exams. The first is a mid-term exam that is scheduled for March 8th (Wednesday) and will take place in class. The preceding Monday (March 6th) will be an optional review session, where you should come prepared with questions. The second exam is a cumulative final that is scheduled for April 26th.
+
 The final grade is calculated as a weighted average of these components with the following weights:
 
 - **Problem sets:** 9 in total, each worth 5% of your final grade. You can drop the lowest-scoring problem set, resulting in a total value of 40% of your final grade.
@@ -81,7 +80,7 @@ Every problem set is assigned on a Monday, and due on Brightspace by **6PM Nashv
 
 ### Cell Phones, Laptops, Tablets, etc.
 
-You are strongly encouraged to bring your laptop to class in order to work through the `.Rmd` file during the lecture. These `.Rmd` files will be posted to the GitHub repository at least 24 hours prior to the lecture. Students are encouraged to download these files and work through them prior to class.
+You are expected to bring your laptop to class in order to work through the `.Rmd` file during the lecture. These `.Rmd` files will be posted to the GitHub repository at least 24 hours prior to the lecture. Students are encouraged to download these files and work through them prior to class.
 
 You are asked to silence your cell phone / tablet / smart watch before class begins.
 
@@ -128,14 +127,14 @@ The observance of religious holidays (activities observed by a religious group o
 
 *[Back to ToC](#table-of-contents)*
 
-## Office Hours
-* Prof. Bisbee: M & W 11AM to 12PM; The Commons Room 353
-* TA Mubarak Ganyiu: TBD
-* TA Quishi Yan: TBD
+## Office Hours (OH) / Labs
+* Prof. Bisbee: OH M & W at 11AM in The Commons Center #353
+* TA Mubarak Ganyiu: Lab Thursdays at 3PM in ESB 044
+* TA Quishi Yan: Lab Thursdays at 5PM in Rand 308
 * TA Sriram Kannan: TBD
-* TA Daniel Rosen: TBD
-* TA Promod Rajauru: TBD
-* TA Minwoo Sohn: TBD
+* TA Daniel Rosen: Lab Wednesdays at 3PM in ESB 044
+* TA Promod Rajauru: Lab Fridays at 9AM in ESB 044
+* TA Minwoo Sohn: Lab Wednesdays at 5PM in ESB 044
 * TA Mengqing Chen: TBD
 * TA Yuting Lu: TBD
 
