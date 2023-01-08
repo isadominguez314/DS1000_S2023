@@ -42,52 +42,34 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 })
 ```
 
----
-
 # Agenda
 
 1. Meet the instructor
 
---
-
-  - Prof. Bisbee: _james.h.bisbee@vanderbilt.edu_
-  
---
-
 2. Course Motivation
-
---
 
   - What is data science (DS) & why should we care?
 
---
-
 3. Course Objectives
-
---
 
   - **Content:** Critical thinking, analysis, presentation
 
---
-
   - **Skills:** Computing and analysis in R
   
---
-
 4. Course Expectations & Syllabus review
 
 ---
 
 # Meet the instructor
 
---
-
-- PhD from NYU Politics in 2019
+- Education
 
 --
 
-- Postdocs at Princeton Niehaus & NYU CSMaP
+  - PhD from NYU Politics in 2019
 
+  - Postdocs at Princeton Niehaus & NYU CSMaP
+  
 --
 
 - Published some things
@@ -96,18 +78,19 @@ knitr::knit_hooks$set(chunk = function(x, options) {
 
   - Methods-ey: external validity [1](https://www.journals.uchicago.edu/doi/full/10.1086/691280?af=R), [2](https://www.cambridge.org/core/journals/american-political-science-review/article/testing-social-science-network-theories-with-online-network-data-an-evaluation-of-external-validity/4BF517F10F38DFB574FED4A3D805B613); measurement [3](https://www.cambridge.org/core/journals/american-political-science-review/article/barp-improving-mister-p-using-bayesian-additive-regression-trees/630866EB47F9366EDB3C22CFD951BB6F), [4](https://www.cambridge.org/core/journals/political-analysis/article/geographic-boundaries-and-local-economic-conditions-matter-for-views-of-the-economy/32C8C058B8E16CAD48374F95B2B1B3EF)
 
---
-
   - Substantive: economics & populism [1](https://www.tandfonline.com/doi/full/10.1080/13501763.2019.1678662); Covid-19 & U.S. politics [2](https://www.journals.uchicago.edu/doi/10.1086/716969),  [3](https://www.cambridge.org/core/journals/american-political-science-review/article/flight-to-safety-covidinduced-changes-in-the-intensity-of-status-quo-preference-and-voting-behavior/AE84D93BAF8B27284DD8F6A75DE5D18A); IPE [4](https://doi.org/10.1017/S0020818319000109); academic naval-gazing [5](https://www.cambridge.org/core/journals/perspectives-on-politics/article/abs/polisci-twitter-a-descriptive-analysis-of-how-political-scientists-use-twitter-in-2019/C8A193C3E939C1ABCD4600DFE8AEF79A?utm_source=hootsuite&utm_medium=twitter&utm_campaign=PPS_Dec20)
+
+  - Popular press: [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&utm_source=twitter&utm_campaign=wp_monkeycage), [Podcasts](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/)
   
 --
 
-- Popular press
+- Work
 
 --
 
-  - Monkey Cage articles [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&utm_source=twitter&utm_campaign=wp_monkeycage)
-  - [Podcast](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/) / Radio interviews
+  - World Bank / IFC
+  
+  - MarketCast
 
 ---
 
@@ -129,16 +112,11 @@ knitr::knit_hooks$set(chunk = function(x, options) {
   
 --
 
-- Is my current research agenda .red[data] .blue[science]?
+- (Throughout the semester, I colorcode .red[data] .blue[science])
 
 ---
 
 # Why are you here?
-
---
-
-background-image: url(./figs/DataScienceVCompProgramming.png)
-background-size: contain
 
 --
 
@@ -173,9 +151,8 @@ background-size: contain
 
 - No
 
---
 
-.center[<img src="figs/datagrowth.png" width = "75%">]
+<center><img src="figs/datagrowth.png" width = "75%"></center>
 
 
 ---
@@ -184,9 +161,7 @@ background-size: contain
 
 - But there are faddish qualities
 
---
-
-.center[<img src="figs/hype_cycle.png" width = "75%">]
+<center><img src="figs/hype_cycle.png" width = "75%"></center>
 
 
 ---
@@ -245,16 +220,6 @@ background-size: contain
 
 # .blue[Research] Camp
 
---
-
-- The scientific method
-
-<center><img src="figs/The_Scientific_Method.png" width="60%"></center>
-
----
-
-# .blue[Research] Camp
-
 - The scientific method
 
   1. .red[Observation] &rarr; .blue[Question]
@@ -265,7 +230,7 @@ background-size: contain
 
 --
 
-  3. .red[Data Collection] &rarr; .red[Analysis]
+  3. .red[Data Collection / Wrangling] &rarr; .red[Analysis]
 
 --
 
@@ -299,7 +264,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
           # size = 1
         ),
         axis.text.x = element_text(angle = 45,hjust = 1,size = 14)) + 
-  scale_x_continuous(breaks = seq(1,8,by = 1),labels = c('Observation','Question','Theory','Hypothesis','Data Collection',
+  scale_x_continuous(breaks = seq(1,8,by = 1),labels = c('Observation','Question','Theory','Hypothesis','Data Prep',
                                                          'Analysis','Results','Conclusion')) + 
   xlab(NULL) + ylab(NULL)
 ```
@@ -316,7 +281,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
   2. .blue[Theory] &rarr; .blue[Hypothesis]
 
-  3. .red[Data Collection] &rarr; .red[Analysis]
+  3. .red[Data Collection / Wrangling] &rarr; .red[Analysis]
 
   4. .red[Results] &rarr; .blue[Conclusion]
 
@@ -346,7 +311,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
           # size = 1
         ),
         axis.text.x = element_text(angle = 45,hjust = 1,size = 14)) + 
-  scale_x_continuous(breaks = seq(1,8,by = 1),labels = c('Observation','Question','Theory','Hypothesis','Data Collection',
+  scale_x_continuous(breaks = seq(1,8,by = 1),labels = c('Observation','Question','Theory','Hypothesis','Data Prep',
                                                          'Analysis','Results','Conclusion')) + 
   xlab(NULL) + ylab(NULL)
 ```
@@ -542,7 +507,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -556,7 +521,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -570,7 +535,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -584,7 +549,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -598,7 +563,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 --
 
@@ -616,7 +581,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -630,7 +595,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -644,7 +609,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -658,7 +623,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -672,7 +637,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -686,7 +651,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -700,7 +665,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -714,7 +679,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -728,7 +693,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -742,7 +707,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -756,7 +721,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -770,7 +735,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -784,7 +749,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 <ol start = 3>
 
-<li> **.red[Data Collection]** &rarr; **.red[Analysis]**
+<li> **.red[Data Collection / Wrangling]** &rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -843,6 +808,12 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
   - ...to draw conclusions
 
 <center><img src="figs/ideo_dist_3.png" width="80%"></center>
+
+---
+
+# The Two Camps
+
+<center><img src="figs/camps3.png" width="80%"></center>
 
 ---
 
@@ -968,17 +939,102 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 --
 
-  - You must download `R` and `RStudio` prior to next class
+  - You must download `R` and `RStudio` prior to next class (Problem Set 0)
   
 --
 
-  - You must work through the first homework assignment using an `.Rmd` file
+  - You must work through first HW using an `.Rmd` file
   
 ---
 
 # Grades
 
 <center><img src="figs/rubric.png" width="50%"></center>
+
+---
+
+# Grades: PSets
+
+- 9 in total, only 8 are graded
+
+--
+
+  - Pset 0 doesn't count
+  
+--
+
+- Posted to **Brightspace** on Mondays at noon
+
+--
+
+- Due **Friday by midnight**
+
+  - Each day late is -1 point
+
+  - After 3 days, scored zero
+  
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Can collaborate but submissions must be your own**
+  
+---
+
+# Grades: Exams
+
+- 2 in total: midterm on March 8th, final on April 26th
+
+--
+
+- 20% of final grade
+
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Cannot collaborate**
+
+
+---
+
+# Grades: Quizzes
+
+- Taken at end of each lecture
+
+--
+
+- Password protected
+
+  - Only students in class can take them
+  
+  - 50% of quiz grade is just taking it (sign affidavit)
+  
+  - 50% of quiz grade is four questions related to lecture
+
+
+---
+
+# Not Graded: HW
+
+- You should work through the homeworks prior to each lecture
+
+--
+
+- Open the `.Rmd` file and Knit it
+
+--
+
+- Read the output and try and answer the prompts
+
+--
+
+- **Not graded**, but enormously helpful in preparing you to keep up with lectures
+
 
 ---
 
@@ -1029,23 +1085,17 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 - Campuswire (place for **questions**)
 
---
-
   - Post questions on the class feed
   
 --
 
 - Brightspace (place for **submissions**)
 
---
-
   - Submit problem sets, quizzes, and exams
   
 --
 
 - GitHub (place for **materials**)
-
---
 
   - Find all in-class materials
   
@@ -1102,7 +1152,7 @@ data.frame(step = c('Observation','Question','Theory','Hypothesis','Data Collect
 
 --
 
-  - The password to take the quiz is `r paste(sample(1:9,size = 4,replace = T),collapse = '')`
+  - The password to take the quiz is #### <!-- `r paste(sample(1:9,size = 4,replace = T),collapse = '')` -->
   
 --
 

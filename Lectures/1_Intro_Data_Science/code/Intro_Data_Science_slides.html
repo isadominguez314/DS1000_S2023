@@ -27,7 +27,7 @@ class: center, middle, inverse, title-slide
 ]
 .date[
 ### Lecture Date: 2023/01/09
-Slides Updated: 2023-01-07
+Slides Updated: 2023-01-08
 ]
 
 ---
@@ -44,52 +44,34 @@ Slides Updated: 2023-01-07
 
 
 
----
-
 # Agenda
 
 1. Meet the instructor
 
---
-
-  - Prof. Bisbee: _james.h.bisbee@vanderbilt.edu_
-  
---
-
 2. Course Motivation
-
---
 
   - What is data science (DS) &amp; why should we care?
 
---
-
 3. Course Objectives
-
---
 
   - **Content:** Critical thinking, analysis, presentation
 
---
-
   - **Skills:** Computing and analysis in R
   
---
-
 4. Course Expectations &amp; Syllabus review
 
 ---
 
 # Meet the instructor
 
---
-
-- PhD from NYU Politics in 2019
+- Education
 
 --
 
-- Postdocs at Princeton Niehaus &amp; NYU CSMaP
+  - PhD from NYU Politics in 2019
 
+  - Postdocs at Princeton Niehaus &amp; NYU CSMaP
+  
 --
 
 - Published some things
@@ -98,18 +80,19 @@ Slides Updated: 2023-01-07
 
   - Methods-ey: external validity [1](https://www.journals.uchicago.edu/doi/full/10.1086/691280?af=R), [2](https://www.cambridge.org/core/journals/american-political-science-review/article/testing-social-science-network-theories-with-online-network-data-an-evaluation-of-external-validity/4BF517F10F38DFB574FED4A3D805B613); measurement [3](https://www.cambridge.org/core/journals/american-political-science-review/article/barp-improving-mister-p-using-bayesian-additive-regression-trees/630866EB47F9366EDB3C22CFD951BB6F), [4](https://www.cambridge.org/core/journals/political-analysis/article/geographic-boundaries-and-local-economic-conditions-matter-for-views-of-the-economy/32C8C058B8E16CAD48374F95B2B1B3EF)
 
---
-
   - Substantive: economics &amp; populism [1](https://www.tandfonline.com/doi/full/10.1080/13501763.2019.1678662); Covid-19 &amp; U.S. politics [2](https://www.journals.uchicago.edu/doi/10.1086/716969),  [3](https://www.cambridge.org/core/journals/american-political-science-review/article/flight-to-safety-covidinduced-changes-in-the-intensity-of-status-quo-preference-and-voting-behavior/AE84D93BAF8B27284DD8F6A75DE5D18A); IPE [4](https://doi.org/10.1017/S0020818319000109); academic naval-gazing [5](https://www.cambridge.org/core/journals/perspectives-on-politics/article/abs/polisci-twitter-a-descriptive-analysis-of-how-political-scientists-use-twitter-in-2019/C8A193C3E939C1ABCD4600DFE8AEF79A?utm_source=hootsuite&amp;utm_medium=twitter&amp;utm_campaign=PPS_Dec20)
+
+  - Popular press: [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=wp_monkeycage), [Podcasts](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/)
   
 --
 
-- Popular press
+- Work
 
 --
 
-  - Monkey Cage articles [1](https://www.washingtonpost.com/news/monkey-cage/wp/2018/04/04/losing-jobs-to-free-trade-makes-americans-more-protectionist-and-nativist/), [2](https://www.washingtonpost.com/politics/2020/04/02/sanders-was-losing-biden-anyway-he-lost-more-areas-with-coronavirus-cases/?utm_medium=social&amp;utm_source=twitter&amp;utm_campaign=wp_monkeycage)
-  - [Podcast](https://www.niskanencenter.org/did-chinese-trade-competition-increase-nativism-and-elect-trump/) / Radio interviews
+  - World Bank / IFC
+  
+  - MarketCast
 
 ---
 
@@ -131,16 +114,11 @@ Slides Updated: 2023-01-07
   
 --
 
-- Is my current research agenda .red[data] .blue[science]?
+- (Throughout the semester, I colorcode .red[data] .blue[science])
 
 ---
 
 # Why are you here?
-
---
-
-background-image: url(./figs/DataScienceVCompProgramming.png)
-background-size: contain
 
 --
 
@@ -175,9 +153,8 @@ background-size: contain
 
 - No
 
---
 
-.center[&lt;img src="figs/datagrowth.png" width = "75%"&gt;]
+&lt;center&gt;&lt;img src="figs/datagrowth.png" width = "75%"&gt;&lt;/center&gt;
 
 
 ---
@@ -186,9 +163,7 @@ background-size: contain
 
 - But there are faddish qualities
 
---
-
-.center[&lt;img src="figs/hype_cycle.png" width = "75%"&gt;]
+&lt;center&gt;&lt;img src="figs/hype_cycle.png" width = "75%"&gt;&lt;/center&gt;
 
 
 ---
@@ -247,16 +222,6 @@ background-size: contain
 
 # .blue[Research] Camp
 
---
-
-- The scientific method
-
-&lt;center&gt;&lt;img src="figs/The_Scientific_Method.png" width="60%"&gt;&lt;/center&gt;
-
----
-
-# .blue[Research] Camp
-
 - The scientific method
 
   1. .red[Observation] &amp;rarr; .blue[Question]
@@ -267,7 +232,7 @@ background-size: contain
 
 --
 
-  3. .red[Data Collection] &amp;rarr; .red[Analysis]
+  3. .red[Data Collection / Wrangling] &amp;rarr; .red[Analysis]
 
 --
 
@@ -289,7 +254,7 @@ background-size: contain
 
   2. .blue[Theory] &amp;rarr; .blue[Hypothesis]
 
-  3. .red[Data Collection] &amp;rarr; .red[Analysis]
+  3. .red[Data Collection / Wrangling] &amp;rarr; .red[Analysis]
 
   4. .red[Results] &amp;rarr; .blue[Conclusion]
 
@@ -486,7 +451,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -500,7 +465,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -514,7 +479,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -528,7 +493,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
   - Data collection separates "Data Science"...
   
@@ -542,7 +507,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 --
 
@@ -560,7 +525,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -574,7 +539,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -588,7 +553,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -602,7 +567,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -616,7 +581,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -630,7 +595,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -644,7 +609,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -658,7 +623,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -672,7 +637,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -686,7 +651,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -700,7 +665,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -714,7 +679,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -728,7 +693,7 @@ background-size: contain
 
 &lt;ol start = 3&gt;
 
-&lt;li&gt; **.red[Data Collection]** &amp;rarr; **.red[Analysis]**
+&lt;li&gt; **.red[Data Collection / Wrangling]** &amp;rarr; **.red[Analysis]**
 
 - Analysis is informed by the .red[data] you have collected...
 
@@ -787,6 +752,12 @@ background-size: contain
   - ...to draw conclusions
 
 &lt;center&gt;&lt;img src="figs/ideo_dist_3.png" width="80%"&gt;&lt;/center&gt;
+
+---
+
+# The Two Camps
+
+&lt;center&gt;&lt;img src="figs/camps3.png" width="80%"&gt;&lt;/center&gt;
 
 ---
 
@@ -912,17 +883,102 @@ background-size: contain
 
 --
 
-  - You must download `R` and `RStudio` prior to next class
+  - You must download `R` and `RStudio` prior to next class (Problem Set 0)
   
 --
 
-  - You must work through the first homework assignment using an `.Rmd` file
+  - You must work through first HW using an `.Rmd` file
   
 ---
 
 # Grades
 
 &lt;center&gt;&lt;img src="figs/rubric.png" width="50%"&gt;&lt;/center&gt;
+
+---
+
+# Grades: PSets
+
+- 9 in total, only 8 are graded
+
+--
+
+  - Pset 0 doesn't count
+  
+--
+
+- Posted to **Brightspace** on Mondays at noon
+
+--
+
+- Due **Friday by midnight**
+
+  - Each day late is -1 point
+
+  - After 3 days, scored zero
+  
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Can collaborate but submissions must be your own**
+  
+---
+
+# Grades: Exams
+
+- 2 in total: midterm on March 8th, final on April 26th
+
+--
+
+- 20% of final grade
+
+--
+
+- Restrictions:
+
+  - Open book / open note / open Campuswire
+
+  - **Cannot collaborate**
+
+
+---
+
+# Grades: Quizzes
+
+- Taken at end of each lecture
+
+--
+
+- Password protected
+
+  - Only students in class can take them
+  
+  - 50% of quiz grade is just taking it (sign affidavit)
+  
+  - 50% of quiz grade is four questions related to lecture
+
+
+---
+
+# Not Graded: HW
+
+- You should work through the homeworks prior to each lecture
+
+--
+
+- Open the `.Rmd` file and Knit it
+
+--
+
+- Read the output and try and answer the prompts
+
+--
+
+- **Not graded**, but enormously helpful in preparing you to keep up with lectures
+
 
 ---
 
@@ -973,23 +1029,17 @@ background-size: contain
 
 - Campuswire (place for **questions**)
 
---
-
   - Post questions on the class feed
   
 --
 
 - Brightspace (place for **submissions**)
 
---
-
   - Submit problem sets, quizzes, and exams
   
 --
 
 - GitHub (place for **materials**)
-
---
 
   - Find all in-class materials
   
@@ -1046,7 +1096,7 @@ background-size: contain
 
 --
 
-  - The password to take the quiz is 3326
+  - The password to take the quiz is #### &lt;!-- 3326 --&gt;
   
 --
 
