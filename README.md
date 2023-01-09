@@ -131,14 +131,14 @@ The observance of religious holidays (activities observed by a religious group o
 * Prof. Bisbee: OH M & W at 11AM in The Commons Center #353
 * TA Mubarak Ganyiu: Lab Thursdays at 3PM in ESB 044
 * TA Quishi Yan: Lab Thursdays at 5PM in Rand 308
-* TA Sriram Kannan: TBD
+* TA Sriram Kannan: OH Mondays at 12PM & Tuesdays at 1:30PM on Zoom
 * TA Daniel Rosen: Lab Wednesdays at 3PM in ESB 044
 * TA Promod Rajauru: Lab Fridays at 9AM in ESB 044
-* TA Minwoo Sohn: OH Mondays at 3PM and Thursdays at 5PM
+* TA Minwoo Sohn: OH Mondays at 3PM & Tuesdays at 5PM in Rand basement
 * TA Mengqing (Kelly) Chen: OH Mondays from 4:30PM - 6:30PM
 * TA Yuting Lu: TBD
 
-All these can also be found on the [Campuswire calendar](https://campuswire.com/c/GE61F4A99/calendar).
+All these can also be found on the [Campuswire calendar](https://campuswire.com/c/GE61F4A99/calendar), along with the Zoom links for those hosting their office hours remotely.
 
 *[Back to ToC](#table-of-contents)*
 
