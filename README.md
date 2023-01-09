@@ -135,8 +135,8 @@ The observance of religious holidays (activities observed by a religious group o
 * TA Daniel Rosen: Lab Wednesdays at 3PM in ESB 044
 * TA Promod Rajauru: Lab Fridays at 9AM in ESB 044
 * TA Minwoo Sohn: OH Mondays at 3PM & Tuesdays at 5PM in Rand basement
-* TA Mengqing (Kelly) Chen: OH Mondays from 4:30PM - 6:30PM
-* TA Yuting Lu: TBD
+* TA Mengqing (Kelly) Chen: OH Mondays from 4:30PM - 6:30PM on Zoom
+* TA Yuting Lu: OH Tuesdays at 3PM & Wednesdays at 4PM on Zoom
 
 All these can also be found on the [Campuswire calendar](https://campuswire.com/c/GE61F4A99/calendar), along with the Zoom links for those hosting their office hours remotely.
 
