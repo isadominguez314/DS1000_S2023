@@ -128,7 +128,7 @@ The observance of religious holidays (activities observed by a religious group o
 *[Back to ToC](#table-of-contents)*
 
 ## Office Hours (OH) / Labs
-* Prof. Bisbee: OH M & W at 11AM in The Commons Center #353
+* Prof. Bisbee: OH M & W at 10AM in the Sarratt Student Center Lounge
 * TA Mubarak Ganyiu: Lab Thursdays at 3PM in ESB 044
 * TA Quishi Yan: Lab Thursdays at 5PM in Rand 308
 * TA Sriram Kannan: OH Mondays at 12PM & Tuesdays at 1:30PM on Zoom
